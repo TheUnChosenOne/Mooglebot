@@ -1,0 +1,30 @@
+{
+  "name": "mooglebot2.0",
+  "version": "1.0.0",
+  "description": "this is a Rpg bot",
+  "main": "mainbot.js",
+  "scripts": {
+    "test": "cookies"
+  },
+  "keywords": [
+    "moogle",
+    "bot"
+  ],
+  "author": "jackmaster9000",
+  "license": "ISC",
+  "devDependencies": {
+    "source-map-loader": "^0.2.1",
+    "ts-loader": "^2.3.7"
+  },
+  "dependencies": {
+    "@types/electron": "^1.6.10",
+    "@types/node": "^8.0.28",
+    "discord.js": "^11.2.1",
+    "electron": "^1.7.6",
+    "node-opus": "^0.2.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "discored.js"
+  }
+}

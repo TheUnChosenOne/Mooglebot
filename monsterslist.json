@@ -1,0 +1,1 @@
+{"dragon":{"MonsterName":"dragon","Level":1,"Hp":[200,200],"Mp":[50,50],"Atk":20,"Def":20,"Exp":20,"Gold":100,"Skill":"none","MonsterInfo":"this is a real Monster"},"SRBot":{"MonsterName":"SRBot","Level":1,"Hp":[100,100],"Mp":[50,50],"Atk":10,"Def":10,"Exp":20,"Gold":100,"Skill":"none","MonsterInfo":"this is a noob Monster"}}
