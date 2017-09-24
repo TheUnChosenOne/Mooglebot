@@ -10,13 +10,14 @@ moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
 moogle.monsterlist = JSON.parse(fs.readFileSync('monsterslist.json')) || {}
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
+moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
-module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC){
+module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory) {
   if (message.content.match(/>takeitem (.*)/i) && message.content.startsWith('>takeitem')) {
     const regex = message.content.match(/>takeitem (.*)/i)[1]
     const itemIn = regex
     const quantity = 1
-
+    getD.Items[itemIn] = moogle.playerInventory
     console.log(itemIn + ` ` + quantity)
 
     // check for errors in function call.
@@ -26,19 +27,21 @@ module.exports.run = function (message, client, contents, userId, masterLevel, g
       return
     }
     if (!getD.Items[itemIn]) {
-      message.channel.send(moogle.Itemlist[itemIn].ItemName + ' does not have any ' + itemIn + 's.')
+      message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' does not have any ' + itemIn + 's.')
       return
     }
-    if (quantity > getD.Items[itemIn].Amount[0]) {
-      message.channel.send(moogle.Itemlist[itemIn].ItemName + ' does not have enough ' + itemIn + 's.')
+    if (quantity > playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0]) {
+      message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' does not have enough ' + itemIn + 's.')
       return
     }
-    getD.Items[itemIn].Amount[0] -= quantity
-    var index = getD.Items.indexOf(itemIn)
-    if (getD.Items[itemIn].Amount[0] === 0) {
+    playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] -= quantity
+    message.channel.send(quantity + '  ' + itemIn + 's.' + ' has been removed ')
+    fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
+    if (playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] === 0) {
       message.channel.send(quantity + '  ' + itemIn + 's.' + ' has been removed ')
-      getD.Items[itemIn] = undefined
-      getD.Items.splice(undefined)
+      playerInventory[message.guild.id + message.member.user.id + itemIn] = undefined
+      getD.Items.splice(itemIn)
+      fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
     }
   }
 }

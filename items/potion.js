@@ -15,22 +15,26 @@ module.exports.run = function (Items) {
       ItemId: 0,
       Amount: [0, 100],
       Gold: 50,
-      Effect: function (getC, getD, message) {
+      Effect: function (getC, getD, message, playerInventory) {
         if (getC.Hp[0] === getC.Hp[1]) {
           message.channel.send(`your HP is full`)
         } else {
           const heal = 25
           getC.Hp[0] += heal
-          getD.Items.Potion.Amount[0] -= 1
+          playerInventory[message.guild.id + message.member.user.id + `Potion`].Amount[0] -= 1
+          message.channel.send(`You have used 1 Potion` + ' ' + 'Kupo. ')
+          fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
+
           if (getC.Hp[0] > getC.Hp[1]) {
             getC.Hp[0] = getC.Hp[1]
           }
           message.channel.send(`you HP has been restord by ${heal}`)
 
-          if (getD.Items.Potion.Amount[0] === 0) {
+          if (playerInventory[message.guild.id + message.member.user.id + `Potion`].Amount[0] === 0) {
             message.channel.send(`You have used 1 Potion` + ' ' + 'Kupo. ')
-            getD.Items.Potion = undefined
-            getD.Items.splice(undefined)
+            playerInventory[message.guild.id + message.member.user.id + `Potion`] = undefined
+            getD.Items.splice(`Potion`)
+            fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
           }
         }
       },

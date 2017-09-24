@@ -11,8 +11,9 @@ moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
 moogle.monsterlist = JSON.parse(fs.readFileSync('monsterslist.json')) || {}
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
+moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || []
 
-module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC) {
+module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory) {
   if (message.content.match(/>giveitem (.*)/i) && message.content.startsWith('>giveitem')) {
     const regex = message.content.match(/>giveitem (.*)/i)[1]
     const itemIn = regex
@@ -29,15 +30,24 @@ module.exports.run = function (message, client, contents, userId, masterLevel, g
       this.takeItem(itemIn, -1 * quantity)
       return
     }
+    console.log(playerInventory)
     if (moogle.Itemlist[itemIn]) {
-      if (getD.Items[itemIn]) {
-        getD.Items[itemIn].Amount[0] += quantity
+      if (playerInventory[message.guild.id + message.member.user.id + itemIn]) {
+        playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] += quantity
+        fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
       } else {
-        getD.Items[itemIn] = new moogle.Item(itemIn, quantity)
-        getD.Items.push(itemIn, getD.Items[itemIn])
+        playerInventory[message.guild.id + message.member.user.id + itemIn] = new moogle.Item(itemIn, quantity)
+        fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
+       // getD.Items[message.guild.id + message.member.user.id + itemIn] = moogle.playerInventory[message.guild.id + message.member.user.id + itemIn]
+        getD.Items.push(itemIn)
+        // getD.Items[itemIn] = getD.Items[itemIn] || moogle.Item
         // getD.Items[itemIn].Amount[0] += quantity
       }
-      if (getD.Items[itemIn].Amount > 1) { message.channel.send(getD.Items[itemIn].ItemName + ' has been given ' + quantity + ' ' + itemIn + 's.') } else { message.channel.send(getD.Items[itemIn].ItemName + ' has been given ' + quantity + ' ' + itemIn + '.') }
+      if (playerInventory[message.guild.id + message.member.user.id + itemIn].Amount > 1) {
+        message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' has been given ' + quantity + ' ' + itemIn + 's.')
+      } else {
+        message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' has been given ' + quantity + ' ' + itemIn + '.')
+      }
     } else {
       message.channel.send('That item does not exist.')
     }
@@ -56,5 +66,6 @@ function typeCheck (source, input, expected) {
 }
 moogle.Item = function (itemIn, quantity) {
   this.ItemName = itemIn
+  this.ItemId = moogle.Itemlist[itemIn].ItemId
   this.Amount = [quantity, 100]
 }

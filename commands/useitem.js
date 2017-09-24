@@ -10,17 +10,18 @@ moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
 moogle.monsterlist = JSON.parse(fs.readFileSync('monsterslist.json')) || {}
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
+moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
-module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC, getI) {
+module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory) {
   if (message.content.match(/>useitem (.*)/i) && message.content.startsWith('>useitem')) {
     const regex = message.content.match(/>useitem (.*)/i)[1]
     const itemIn = regex
     if (moogle.Itemlist[itemIn]) {
-      if (!getD.Items[itemIn]) {
+      if (!playerInventory[message.guild.id + message.member.user.id + itemIn]) {
         message.channel.send(moogle.Itemlist[itemIn].ItemName + ' does not have any ' + itemIn + 's.')
         return
       }
-      getI[getD.Items[itemIn].ItemId][itemIn].Effect(getC, getD, message)
+      getI[playerInventory[message.guild.id + message.member.user.id + itemIn].ItemId][itemIn].Effect(getC, getD, message, playerInventory)
    // moogle.takeitem(regex, getD, message)
     } else {
       message.channel.send('That item does not exist.')

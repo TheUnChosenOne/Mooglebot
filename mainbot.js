@@ -26,6 +26,7 @@ moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
 moogle.monsterlist = JSON.parse(fs.readFileSync('monsterslist.json')) || {}
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
+moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
 moogle.guild = moogle.guild || []
 // const monsters = JSON.parse(fs.readFileSync('monsters.json')) || {}
@@ -168,9 +169,24 @@ function getData (userId, message) {
 function getClassData (userId, message) {
   return moogle.classeslist[getData(userId, message).Class]
 }
-function getItemData (Item) {
-  return moogle.Itemlist[Item]
+function getItemData (getD, guildId, userId) {
+  let result = ''
+  if (getD.Items.length === 0) { var test2 = `inventory is empty.` } else {
+    console.log(getD.Items + ' has: ')
+    console.log(getD.Items)
+    for (var i = 0; i < getD.Items.length; i++) {
+      if (moogle.playerInventory[guildId + userId + getD.Items[i]] !== undefined) {
+        var test = `${moogle.playerInventory[guildId + userId + getD.Items[i]].ItemName}: ${moogle.playerInventory[guildId + userId + getD.Items[i]].Amount[0]}`
+      }
+      result += `${test}\n`
+    }
+  } return test2 || result
 }
+
+function getItemData2 (guildId, userId, Item) {
+  return moogle.playerdata[guildId + userId + Item]
+}
+
 function getBotData (botId, server) {
   return moogle.botInfo[server + botId]
 }
@@ -246,6 +262,7 @@ Client.on('message', (message) => {
   const masterLevel = moogle.lvllist
   const test = `Kupo!`
   const getI = moogle.Items
+  const playerInventory = moogle.playerInventory
 
   moogle.eval(message)
   if (message.channel.type !== `dm`) {
@@ -254,8 +271,10 @@ Client.on('message', (message) => {
     if (message.member.user.bot === false) {
       const getD = getData(userId, message)
       const getC = getClassData(userId, message)
+      const guildId = message.guild.id
+      const getPi = getItemData(getD, guildId, userId)
 
-      moogle.commands(message, userId, masterLevel, getD, getC, getI)
+      moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory)
   // var player = getData(userId, message)
       moogle.ProcessLeveling(userId, message)
       moogle.CheckForLevelChange(userId, message)
@@ -270,7 +289,9 @@ Client.on('message', (message) => {
         if (Client.guilds.find(`id`, server.id).members.find(`id`, userId)) {
           const getD = moogle.playerInfo[server.id + userId]
           const getC = moogle.classeslist[moogle.playerInfo[server.id + userId].Class]
-          moogle.commands(message, userId, masterLevel, getD, getC, getI)
+          const guildId = server.id
+          const getPi = getItemData(getD, guildId, userId)
+          moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory)
         }
       }
     }
@@ -285,13 +306,13 @@ Client.on('message', (message) => {
 
 // Commad handler
 
-moogle.commands = function (message, userId, masterLevel, getD, getC, getI) {
+moogle.commands = function (message, userId, masterLevel, getD, getC, getI, getPi, playerInventory) {
   if (message.author !== Client.user && contains(contents.banlist, message.author.id) === false) {
     if (message.content.match(/>(.*)/i)) {
       for (let j = 0; j < moogle.commandlist.length; j++) {
         try {
           const cmd = require(`./commands/${moogle.commandlist[j]}`)
-          cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI)
+          cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory)
           // console.log(`${j}: ${moogle.commandlist[j]}`)
         } catch (err) { message.channel.send(`ERROR: Command \`${moogle.commandlist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``) }
       }
@@ -719,4 +740,4 @@ moogle.eval = function (message) {
   }
 }
 
-Client.login('MzQyMDAwOTg1NDY5NjE2MTMw.DGJdOw.Z-RKv2y305ZN6NWikaM-HOHciuA')
+Client.login('')
