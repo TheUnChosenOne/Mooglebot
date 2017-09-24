@@ -719,4 +719,4 @@ moogle.eval = function (message) {
   }
 }
 
-Client.login('MzQyMDAwOTg1NDY5NjE2MTMw.DGJdOw.Z-RKv2y305ZN6NWikaM-HOHciuA')
+Client.login('addloginbottoken')
