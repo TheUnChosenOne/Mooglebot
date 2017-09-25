@@ -15,7 +15,7 @@ const moogle = {}
 // }
 
 moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
-module.exports.run = function (contents, classlist, guild, masterLevel) {
+module.exports.run = function (contents, classlist, guild, masterLevel, classsave) {
   try {
     for (let i = 0; i < guild.length; i++) {
       for (let j = 0; j < guild[i].members.array().length; j++) {
@@ -32,17 +32,13 @@ module.exports.run = function (contents, classlist, guild, masterLevel) {
             Skill: 'none',
             ClassInfo: 'this is a noobClass'
           }
-          moogle.classeslist[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] = moogle.classeslist[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] || Classdata
+          classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] = classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] || Classdata
         }
       }
     }
   } catch (err) { console.log(`ERROR: Class \`${guild[1].members.array()}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.`) }
-  saveData()
+  saveData(classsave)
 }
-function saveData () {
-  fs.writeFileSync('classeslist.json', JSON.stringify(moogle.classeslist), moogle.catch)
-}
-
-module.exports.saveData = function () {
-  fs.writeFileSync('classeslist.json', JSON.stringify(moogle.classeslist), moogle.catch)
+function saveData (classsave) {
+  fs.writeFileSync('classeslist.json', JSON.stringify(classsave), moogle.catch)
 }

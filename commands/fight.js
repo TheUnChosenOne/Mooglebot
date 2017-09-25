@@ -9,7 +9,7 @@ moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
 moogle.monsterlist = JSON.parse(fs.readFileSync('monsterslist.json')) || {}
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 
-module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName) {
   if (message.content.match(/>fight (.*)/i) && message.content.startsWith('>fight')) {
     const regex = message.content.match(/>fight (.*)/i)[1]
 
@@ -77,6 +77,15 @@ module.exports.run = function (message, client, contents, userId, masterLevel, g
     console.log(globResult)
     console.log(getC.Hp[0])
   }
+  const Commanddata = {
+    CommandName: `>Fight [Power#]`,
+    CommandInfo: `Allows you to fight monsters`
+  }
+  if (Commands[Commanddata.CommandName]) {
+  } else {
+    Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+    CommandName.push(Commanddata.CommandName)
+  }
 }
 
 // battle resalts
@@ -93,19 +102,19 @@ moogle.OnDamageEnemy = function (result, globResult, message, enemy, playerDamag
   //   moogle.PlayerInfo[id]['items'].push(enemy.reward)
   //   result += 'Obtained a ' + enemy.reward + '!\n'
   // }
-  const exp = Math.floor(enemy.exp * (enemyDamage / enemy.health))
+  const exp = Math.floor(enemy.Exp * (enemyDamage / enemy.Hp))
   if (exp) {
     getC.Exp += exp
     result += 'Gained ' + exp + ' experience!\n'
     // c = true
   }
-  const gold = Math.floor(enemy.gold * (enemyDamage / enemy.health))
+  const gold = Math.floor(enemy.Gold * (enemyDamage / enemy.Hp))
   if (gold) {
     getD.Gold += gold
     result += 'Got $' + gold + '!\n'
   }
   result += '```'
-  globResult += user + '` fought (with a power of ' + power + ')`\n`They damaged ' + enemy.MonsterName + ' by ' + enemyDamage + ' HP and lost ' + playerDamage + 'HP!`\n'
+  globResult += user + '` \nfought (with a power of ' + power + ')`\n`They damaged ' + enemy.MonsterName + ' by ' + enemyDamage + ' HP and lost ' + playerDamage + 'HP!`\n'
   server.me.setNickname(`L${server.__currentBattleEnemyLv} ${enemy.MonsterName} [${server.__currentBattleEnemyHp} HP]`)
   server.__existingAttacks.push(userId)
   return [result, globResult]

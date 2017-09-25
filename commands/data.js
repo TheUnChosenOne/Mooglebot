@@ -8,7 +8,7 @@ moogle.playerInfo = JSON.parse(fs.readFileSync('playerInfo.json', moogle.catch))
 moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json', moogle.catch)) || {}
 moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName) {
   if (message.content.match(/>data/i)) {
     const l = getC.Level
     const expNeded = masterLevel[l].Exp - getC.Exp
@@ -25,5 +25,14 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
       .addField(`Guild Name`, `${getD.ServerName}`)
     message.author.send({embed})
     message.delete()
+  }
+  const Commanddata = {
+    CommandName: `>Data`,
+    CommandInfo: `Gives info on your player`
+  }
+  if (Commands[Commanddata.CommandName]) {
+  } else {
+    Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+    CommandName.push(Commanddata.CommandName)
   }
 }
