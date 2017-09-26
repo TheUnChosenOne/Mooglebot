@@ -15,7 +15,7 @@ const moogle = {}
 // }
 
 moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
-module.exports.run = function (contents, classlist, guild, masterLevel, classsave) {
+module.exports.run = function (contents, classlist, guild, masterLevel, classsave, Classes, ClassName) {
   try {
     for (let i = 0; i < guild.length; i++) {
       for (let j = 0; j < guild[i].members.array().length; j++) {
@@ -33,6 +33,11 @@ module.exports.run = function (contents, classlist, guild, masterLevel, classsav
             ClassInfo: 'this is a noobClass'
           }
           classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] = classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] || Classdata
+          if (Classes[Classdata.ClassName]) {
+          } else {
+            Classes[Classdata.ClassName] = Classes[Classdata.ClassName] || Classdata
+            ClassName.push(Classdata.ClassName)
+          }
         }
       }
     }

@@ -1,4 +1,3 @@
-
 const Discord = require('discord.js')
 const util = require('util')
 const fs = require('fs')
@@ -8,17 +7,21 @@ const moogle = {}
 // const CommandNames = moogle.CommandName || []
 
 module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl) {
-  if (message.content.match(/>help/i)) {
-    const embed = new Discord.RichEmbed()
-    .setTitle(`MoogleBot´s Command List`)
-    .addField(`Command Name and Command Info`, getCd, true)
-    message.delete()
-    message.author.send(embed)
+  if (message.content.match(/>changename (.*)/i) && message.content.startsWith('>changename')) {
+    const regex = message.content.match(/>changename (.*)/i)[1]
+    getD.PlayerName = regex
+    const level = getC.Level
+    let lvl = `Lvl ${level} `
+    if (getD.isDead !== false) {
+      lvl = '[Dead] '
+    }
+    message.member.user.setNickname(lvl + getD.PlayerName)
+    message.author.send(`your nickname has been chaned`)
   }
 
   const Commanddata = {
-    CommandName: `>Help`,
-    CommandInfo: `Gives info on all the commands`
+    CommandName: `>ChangeName`,
+    CommandInfo: `Allows you to chsnge your name`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {
