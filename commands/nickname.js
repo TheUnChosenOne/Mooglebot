@@ -15,7 +15,7 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     if (getD.isDead !== false) {
       lvl = '[Dead] '
     }
-    message.member.user.setNickname(lvl + getD.PlayerName)
+    message.member.setNickname(lvl + getD.PlayerName)
     message.author.send(`your nickname has been chaned`)
   }
 
