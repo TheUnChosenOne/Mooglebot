@@ -29,7 +29,7 @@ module.exports.run = function (contents, classlist, guild, masterLevel, classsav
             Mp: [50, 50],
             Atk: 10,
             Def: 10,
-            Skill: 'none',
+            Skill: ['scan'],
             ClassInfo: 'this is a noobClass'
           }
           classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] = classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] || Classdata

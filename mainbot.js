@@ -40,6 +40,9 @@ moogle.Commands = moogle.Commands || {}
 moogle.CommandName = moogle.CommandName || []
 moogle.Classes = moogle.Classes || {}
 moogle.ClassName = moogle.ClassName || []
+moogle.Skillablity = moogle.Skillablity || {}
+moogle.SkillName = moogle.SkillName || []
+moogle.Skilllist = moogle.Skilllist || []
 
 fs.writeFileSync('monsters.json', JSON.stringify(moogle.Monsters))
 
@@ -211,6 +214,18 @@ function getClassListData () {
   } return test2 || result
 }
 
+function getSkillListData (getC) {
+  let result = ''
+  if (getC.Skill.length === 0) { var test2 = `you have no class` } else {
+    for (var i = 0; i < getC.Skill.length; i++) {
+      if (moogle.Skilllist[getC.Skill[i]] !== undefined) {
+        var test = `${moogle.Skilllist[getC.Skill[i]].SkillName}\n${moogle.Skilllist[getC.Skill[i]].SkillInfo}\n${moogle.Skilllist[getC.Skill[i]].SkillMpCost}`
+      }
+      result += `${test}\n`
+    }
+  } return test2 || result
+}
+
 function getItemData2 (guildId, userId, Item) {
   return moogle.playerdata[guildId + userId + Item]
 }
@@ -294,6 +309,9 @@ Client.on('message', (message) => {
   const playerInventory = moogle.playerInventory
   const getCd = getCommandData()
   const getCl = getClassListData()
+  const Skillablity = moogle.Skillablity
+  const SkillName = moogle.SkillName
+  const Skilllist = moogle.Skilllist
 
   moogle.eval(message)
   if (message.channel.type !== `dm`) {
@@ -304,8 +322,9 @@ Client.on('message', (message) => {
       const getC = getClassData(userId, message)
       const guildId = message.guild.id
       const getPi = getItemData(getD, guildId, userId)
+      const getS = getSkillListData(getC)
 
-      moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl)
+      moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS)
   // var player = getData(userId, message)
       moogle.ProcessLeveling(userId, message)
       moogle.CheckForLevelChange(userId, message)
@@ -322,7 +341,8 @@ Client.on('message', (message) => {
           const getC = moogle.classeslist[moogle.playerInfo[server.id + userId].Class]
           const guildId = server.id
           const getPi = getItemData(getD, guildId, userId)
-          moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl)
+          const getS = getSkillListData(getC)
+          moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS)
         }
       }
     }
@@ -337,7 +357,7 @@ Client.on('message', (message) => {
 
 // Commad handler
 
-moogle.commands = function (message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl) {
+moogle.commands = function (message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS) {
   const Commands = moogle.Commands
   const CommandName = moogle.CommandName
   if (message.author !== Client.user && contains(contents.banlist, message.author.id) === false) {
@@ -345,7 +365,7 @@ moogle.commands = function (message, userId, masterLevel, getD, getC, getI, getP
       for (let j = 0; j < moogle.commandlist.length; j++) {
         try {
           const cmd = require(`./commands/${moogle.commandlist[j]}`)
-          cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl)
+          cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS)
           // console.log(`${j}: ${moogle.commandlist[j]}`)
         } catch (err) { message.channel.send(`ERROR: Command \`${moogle.commandlist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``) }
       }
@@ -399,10 +419,14 @@ moogle.items = function () {
 // skill hanndler
 
 moogle.skills = function () {
+  const Skillablity = moogle.Skillablity
+  const SkillName = moogle.SkillName
+  const Skilllist = moogle.Skilllist
+
   for (let j = 0; j < moogle.skillslist.length; j++) {
     try {
       const skill = require(`./skills/${moogle.skillslist[j]}`)
-      skill.run()
+      skill.run(Skillablity, SkillName, Skilllist)
       console.log(`${j}: ${moogle.skillslist[j]}`)
     } catch (err) { console.log(`ERROR: Skill \`${moogle.skillslist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``) }
   }

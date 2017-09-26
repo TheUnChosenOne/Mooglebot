@@ -11,7 +11,7 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
   if (message.content.match(/>help/i)) {
     const embed = new Discord.RichEmbed()
     .setTitle(`MoogleBot´s Command List`)
-    .addField(`Command Name and Command Info`, getCd, true)
+    .addField(`Command Name and Command Info`, getCd)
     message.delete()
     message.author.send(embed)
   }
