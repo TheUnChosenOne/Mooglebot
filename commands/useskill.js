@@ -12,11 +12,11 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
 
     if (server.__battleIsActive) {
       if (getD.isDead !== false) {
-        message.channel.send('You cannot fight enemies while dead. Kupo!')
+        message.channel.send('You cannot use skills while dead. Kupo!')
         return
       }
       if (getC.Level - 5 > server.__currentBattleEnemyLv) {
-        message.channel.send('You may not fight enemies more than 5 levels below your own level. Kupo!')
+        message.channel.send('You may not use skills on enemies more than 5 levels below your own level. Kupo!')
         return
       }
 
@@ -31,6 +31,15 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     } else {
       message.channel.send('That skill does not exist.')
     }
+  }
+  const Commanddata = {
+    CommandName: `>UseSkill [SkillName]`,
+    CommandInfo: `Allows you to use skills`
+  }
+  if (Commands[Commanddata.CommandName]) {
+  } else {
+    Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+    CommandName.push(Commanddata.CommandName)
   }
 }
 moogle.notMe = function (message) {

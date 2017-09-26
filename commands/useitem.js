@@ -12,7 +12,7 @@ moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
 moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
-module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS) {
   if (message.content.match(/>useitem (.*)/i) && message.content.startsWith('>useitem')) {
     const regex = message.content.match(/>useitem (.*)/i)[1]
     const itemIn = regex
@@ -27,38 +27,14 @@ module.exports.run = function (message, client, contents, userId, masterLevel, g
       message.channel.send('That item does not exist.')
     }
   }
-}
-moogle.notMe = function (message) {
-  message.channel.send('Hey! You are not my master!')
-}
 
-moogle.takeitem = function (regex, getD, message) {
-  const itemIn = regex
-  const quantity = 1
-
-  console.log(itemIn + ` ` + quantity)
-
-    // check for errors in function call.
-  if (typeCheck('takeItem', itemIn, 'string') || typeCheck('takeItem', quantity, 'number')) return
-  if (quantity === 0) {
-    message.channel.send("You can't take 0 items.")
-    return
+  const Commanddata = {
+    CommandName: `>UseItems [ItemName]`,
+    CommandInfo: `Allows you to use items`
   }
-
-  if (quantity > getD.Items[itemIn].Amount[0]) {
-    message.channel.send(moogle.Itemlist[itemIn].ItemName + ' does not have enough ' + itemIn + 's.')
-    return
+  if (Commands[Commanddata.CommandName]) {
+  } else {
+    Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+    CommandName.push(Commanddata.CommandName)
   }
-  getD.Items[itemIn].Amount[0] -= quantity
-  if (getD.Items[itemIn].Amount[0] === 0) {
-    message.channel.send(quantity + '  ' + itemIn + 's.' + ' has been removed ')
-    getD.Items[itemIn] = undefined
-    getD.Items.splice(undefined)
-  }
-}
-function typeCheck (source, input, expected) {
-  if (typeof input !== expected) {
-    console.log('Error in ' + source + '. ' + input + ' is not of type ' + expected + '.')
-    return true
-  } else return false
 }

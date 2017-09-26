@@ -219,7 +219,7 @@ function getSkillListData (getC) {
   if (getC.Skill.length === 0) { var test2 = `you have no class` } else {
     for (var i = 0; i < getC.Skill.length; i++) {
       if (moogle.Skilllist[getC.Skill[i]] !== undefined) {
-        var test = `${moogle.Skilllist[getC.Skill[i]].SkillName}\n${moogle.Skilllist[getC.Skill[i]].SkillInfo}\n${moogle.Skilllist[getC.Skill[i]].SkillMpCost}`
+        var test = `${moogle.Skilllist[getC.Skill[i]].SkillName}\n${moogle.Skilllist[getC.Skill[i]].SkillInfo}\n${moogle.Skilllist[getC.Skill[i]].Mpcost}`
       }
       result += `${test}\n`
     }
