@@ -27,9 +27,11 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
         }
         Skillablity[Skilllist[skill].SkillId][skill].Effect(getC, getD, message, playerInventory)
    // moogle.takeskill(regex, getD, message)
+      } else {
+        message.channel.send('That skill does not exist.')
       }
     } else {
-      message.channel.send('That skill does not exist.')
+      message.channel.send = 'There is no enemy in ' + server.name + ' right now.'
     }
   }
   const Commanddata = {

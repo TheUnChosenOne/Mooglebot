@@ -10,7 +10,7 @@ module.exports.run = function (Skillablity, SkillName, Skilllist) {
     const Skilldata = {
       SkillName: 'scan',
       SkillId: 0,
-      Mpcost: 50,
+      Mpcost: 5,
       Effect: function (getC, getD, message, playerSkills) {
         const server = message.guild
         const embed = new Discord.RichEmbed()
