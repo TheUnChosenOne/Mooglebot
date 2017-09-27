@@ -168,7 +168,7 @@ moogle.OnKillEnemy = function (result, globResult, message, enemy, playerDamage,
   }
   result += '```'
   server.__existingAttacks = []
-  const globMessage = user + '` defeated the ' + enemy.MonsterName + '!\nThey fought (with a power of ' + p + ') and lost ' + pd + 'HP!`'
+  const globMessage = user + '` defeated the ' + enemy.MonsterName + '!\nThey fought (with a power of ' + power + ') and lost ' + playerDamage + 'HP!`'
   moogle.removeMonster(server, user, false, globMessage)
   return [result, globResult]
 }
@@ -209,4 +209,10 @@ moogle.removeMonster = function (server, winner, didEscape, content) {
   } else {
     moogle.SendLog(server, server.defaultChannel, content)
   }
+}
+
+moogle.Item = function (itemIn, quantity) {
+  this.ItemName = itemIn
+  this.ItemId = moogle.Itemlist[itemIn].ItemId
+  this.Amount = [quantity, 100]
 }

@@ -20,12 +20,12 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
         return
       }
 
-      if (Skilllist[skill]) {
-        if (!getC.Skill[skill]) {
-          message.channel.send(Skilllist[skill].SkillName + ' You do not have this ' + skill + '.')
+      if (Skilllist[getC.Skill[skill]]) {
+        if (!Skilllist[getC.Skill[skill]]) {
+          message.channel.send(Skilllist[getC.Skill[skill]].SkillName + ' You do not have this ' + skill + '.')
           return
         }
-        Skillablity[Skilllist[skill].SkillId][skill].Effect(getC, getD, message, playerInventory)
+        Skillablity[Skilllist[getC.Skill[skill]].SkillId][skill].Effect(getC, getD, message, playerInventory)
    // moogle.takeskill(regex, getD, message)
       } else {
         message.channel.send('That skill does not exist.')
@@ -35,7 +35,7 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     }
   }
   const Commanddata = {
-    CommandName: `>UseSkill [SkillName]`,
+    CommandName: `>UseSkill [number]`,
     CommandInfo: `Allows you to use skills`
   }
   if (Commands[Commanddata.CommandName]) {

@@ -35,14 +35,16 @@ contents.banlist = contents.banlist || []
 moogle.lvllist = moogle.lvllist || []
 moogle.Monsters = moogle.Monsters || []
 moogle.Items = moogle.Items || []
+moogle.ShopItems = moogle.ShopItems || []
+moogle.ItemShop = moogle.ItemShop || {}
 moogle.KeyItems = moogle.KeyItems || []
 moogle.Commands = moogle.Commands || {}
 moogle.CommandName = moogle.CommandName || []
 moogle.Classes = moogle.Classes || {}
 moogle.ClassName = moogle.ClassName || []
-moogle.Skillablity = moogle.Skillablity || {}
+moogle.Skillablity = moogle.Skillablity || []
 moogle.SkillName = moogle.SkillName || []
-moogle.Skilllist = moogle.Skilllist || []
+moogle.Skilllist = moogle.Skilllist || {}
 
 fs.writeFileSync('monsters.json', JSON.stringify(moogle.Monsters))
 
@@ -219,13 +221,24 @@ function getSkillListData (getC) {
   if (getC.Skill.length === 0) { var test2 = `you have no class` } else {
     for (var i = 0; i < getC.Skill.length; i++) {
       if (moogle.Skilllist[getC.Skill[i]] !== undefined) {
-        var test = `Skill Name:${moogle.Skilllist[getC.Skill[i]].SkillName} MP Cost:${moogle.Skilllist[getC.Skill[i]].Mpcost}\nInfo:${moogle.Skilllist[getC.Skill[i]].SkillInfo}`
+        var test = `#:${i}Skill Name:${moogle.Skilllist[getC.Skill[i]].SkillName} MP Cost:${moogle.Skilllist[getC.Skill[i]].Mpcost}\nInfo:${moogle.Skilllist[getC.Skill[i]].SkillInfo}`
       }
       result += `${test}\n`
     }
   } return test2 || result
 }
 
+function getShopItemData () {
+  let result = ''
+  if (moogle.ShopItems.length === 0) { var test2 = `you have no class` } else {
+    for (var i = 0; i < moogle.ShopItems.length; i++) {
+      if (moogle.ItemShop[moogle.ShopItems[i]] !== undefined) {
+        var test = `Item Name:${moogle.ItemShop[moogle.ShopItems[i]].ItemName} Item Cost:${moogle.ItemShop[moogle.ShopItems[i]].Gold}\nItem Info:${moogle.ItemShop[moogle.ShopItems[i]].ItemInfo}`
+      }
+      result += `${test}\n`
+    }
+  } return test2 || result
+}
 function getItemData2 (guildId, userId, Item) {
   return moogle.playerdata[guildId + userId + Item]
 }
@@ -309,6 +322,9 @@ Client.on('message', (message) => {
   const playerInventory = moogle.playerInventory
   const getCd = getCommandData()
   const getCl = getClassListData()
+  const getSI = getShopItemData()
+  const getIS = moogle.ItemShop
+  const ShopItems = moogle.ShopItems
   const Skillablity = moogle.Skillablity
   const SkillName = moogle.SkillName
   const Skilllist = moogle.Skilllist
@@ -324,7 +340,7 @@ Client.on('message', (message) => {
       const getPi = getItemData(getD, guildId, userId)
       const getS = getSkillListData(getC)
 
-      moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS)
+      moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS)
   // var player = getData(userId, message)
       moogle.ProcessLeveling(userId, message)
       moogle.CheckForLevelChange(userId, message)
@@ -342,7 +358,7 @@ Client.on('message', (message) => {
           const guildId = server.id
           const getPi = getItemData(getD, guildId, userId)
           const getS = getSkillListData(getC)
-          moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS)
+          moogle.commands(message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS)
         }
       }
     }
@@ -357,7 +373,7 @@ Client.on('message', (message) => {
 
 // Commad handler
 
-moogle.commands = function (message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS) {
+moogle.commands = function (message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   const Commands = moogle.Commands
   const CommandName = moogle.CommandName
   if (message.author !== Client.user && contains(contents.banlist, message.author.id) === false) {
@@ -365,7 +381,7 @@ moogle.commands = function (message, userId, masterLevel, getD, getC, getI, getP
       for (let j = 0; j < moogle.commandlist.length; j++) {
         try {
           const cmd = require(`./commands/${moogle.commandlist[j]}`)
-          cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS)
+          cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS)
           // console.log(`${j}: ${moogle.commandlist[j]}`)
         } catch (err) { message.channel.send(`ERROR: Command \`${moogle.commandlist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``) }
       }
@@ -407,10 +423,12 @@ moogle.monsters = function (message, userId, masterLevel, getD, getC) {
 
 moogle.items = function () {
   const Items = moogle.Items
+  const ShopItems = moogle.ShopItems
+  const ItemShop = moogle.ItemShop
   for (let j = 0; j < moogle.itemslist.length; j++) {
     try {
       const item = require(`./items/${moogle.itemslist[j]}`)
-      item.run(Items)
+      item.run(Items, ShopItems, ItemShop)
       console.log(`${j}: ${moogle.itemslist[j]}`)
     } catch (err) { console.log(`ERROR: Item \`${moogle.itemslist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``) }
   }
@@ -422,11 +440,12 @@ moogle.skills = function () {
   const Skillablity = moogle.Skillablity
   const SkillName = moogle.SkillName
   const Skilllist = moogle.Skilllist
+  const server = Client.guilds.array()
 
   for (let j = 0; j < moogle.skillslist.length; j++) {
     try {
       const skill = require(`./skills/${moogle.skillslist[j]}`)
-      skill.run(Skillablity, SkillName, Skilllist)
+      skill.run(Skillablity, SkillName, Skilllist, server)
       console.log(`${j}: ${moogle.skillslist[j]}`)
     } catch (err) { console.log(`ERROR: Skill \`${moogle.skillslist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``) }
   }

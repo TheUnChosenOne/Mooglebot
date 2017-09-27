@@ -8,7 +8,7 @@ const moogle = {}
 
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
 
-module.exports.run = function (Items) {
+module.exports.run = function (Items, ShopItems, ItemShop) {
   try {
     const Itemdata = {
       ItemName: 'Revive',
@@ -39,6 +39,8 @@ module.exports.run = function (Items) {
     }
     moogle.Itemlist[Itemdata.ItemName] = moogle.Itemlist[Itemdata.ItemName] || Itemdata
     Items.push({Revive: Itemdata})
+    ShopItems.push(Itemdata.ItemName)
+    ItemShop[Itemdata.ItemName] = ItemShop[Itemdata.ItemName] || Itemdata
   } catch (err) { console.log(`ERROR: Item \`${moogle.Itemlist}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.`) }
   saveData()
 }

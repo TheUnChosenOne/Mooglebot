@@ -16,6 +16,10 @@ module.exports.run = function (Skillablity, SkillName, Skilllist) {
         const embed = new Discord.RichEmbed()
         const enemy = server.__currentBattleEnemy
         if (server.__battleIsActive) {
+          if (getC.Mp[0] > 5) {
+            return message.author.send(`You do not have MP to use this skill`)
+          }
+          getC.Mp[0] -= 5
           embed.setTitle(`Enemy's Data`)
           embed.addField(`Name:${enemy.MonsterName} Level:${enemy.Level}`, `HP:${enemy.HP}\nATK:${enemy.Atk}\nDEF:${enemy.Def}\nEXP:${enemy.Exp}\nGold:${enemy.Gold}\nItem:${enemy.Item}\nInfo:${enemy.Info}`)
           message.author.send(embed)
