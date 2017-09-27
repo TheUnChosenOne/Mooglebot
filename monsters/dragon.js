@@ -29,6 +29,7 @@ module.exports.run = function (monsters) {
       Def: 20,
       Exp: 20,
       Gold: 100,
+      Items: `Revives`,
       Skill: 'none',
       MonsterInfo: 'this is a real Monster'
     }

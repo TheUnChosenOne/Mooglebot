@@ -31,7 +31,7 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
         message.channel.send('That skill does not exist.')
       }
     } else {
-      message.channel.send = 'There is no enemy in ' + server.name + ' right now.'
+      message.channel.send('There is no enemy in ' + server.name + ' right now.')
     }
   }
   const Commanddata = {

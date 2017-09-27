@@ -9,7 +9,7 @@ moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
 moogle.monsterlist = JSON.parse(fs.readFileSync('monsterslist.json')) || {}
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist) {
   if (message.content.match(/>fight (.*)/i) && message.content.startsWith('>fight')) {
     const regex = message.content.match(/>fight (.*)/i)[1]
 
@@ -43,12 +43,12 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
         server.__currentBattleEnemyHp -= enemyDamage
         if (server.__currentBattleEnemyHp <= 0) {
           console.log(`dead monster`)
-          const someStuff = moogle.OnKillEnemy(result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD)
+          const someStuff = moogle.OnKillEnemy(result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory)
           result = someStuff[0]
           globResult = someStuff[1]
          // checkForLevelChange = someStuff[2]
         } else {
-          const someStuff = moogle.OnDamageEnemy(result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD)
+          const someStuff = moogle.OnDamageEnemy(result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory)
           result = someStuff[0]
           globResult = someStuff[1]
            // checkForLevelChange = someStuff[2]
@@ -90,18 +90,31 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
 
 // battle resalts
 
-moogle.OnDamageEnemy = function (result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD) {
+moogle.OnDamageEnemy = function (result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory) {
   const server = message.guild
   const user = message.member
   const userId = user.id
+  const quantity = 1
   result += 'You attacked the ' + enemy.MonsterName + ' in ' + server.name + '!\n'
   result += 'Here are the results:```\n'
   result += 'Took ' + enemyDamage + ' HP from the enemy.\n'
   result += 'Lost ' + playerDamage + ' of your own HP.\n'
-  // if (enemy.reward && Math.random() < (ed / enemy.health)) {
-  //   moogle.PlayerInfo[id]['items'].push(enemy.reward)
-  //   result += 'Obtained a ' + enemy.reward + '!\n'
-  // }
+  if (enemy.reward && Math.random() < (enemyDamage / enemy.Hp)) {
+    if (playerInventory[message.guild.id + message.member.user.id + enemy.Item]) {
+      playerInventory[message.guild.id + message.member.user.id + enemy.Item].Amount[0] += quantity
+      fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
+    } else {
+      playerInventory[message.guild.id + message.member.user.id + enemy.Item] = new moogle.Item(enemy.Item, quantity)
+      fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
+      getD.Items.push(enemy.Item)
+    }
+    if (playerInventory[message.guild.id + message.member.user.id + enemy.Item].Amount > 1) {
+      message.channel.send(playerInventory[message.guild.id + message.member.user.id + enemy.Item].ItemName + ' has been given ' + quantity + ' ' + enemy.Item + 's.')
+    } else {
+      message.channel.send(playerInventory[message.guild.id + message.member.user.id + enemy.Item].ItemName + ' has been given ' + quantity + ' ' + enemy.Item + '.')
+    }
+    result += 'Obtained a ' + enemy.Item + '!\n'
+  }
   const exp = Math.floor(enemy.Exp * (enemyDamage / enemy.Hp))
   if (exp) {
     getC.Exp += exp
@@ -120,17 +133,30 @@ moogle.OnDamageEnemy = function (result, globResult, message, enemy, playerDamag
   return [result, globResult]
 }
 
-moogle.OnKillEnemy = function (result, globResult, message, enemy, pd, ed, p, getC, getD) {
+moogle.OnKillEnemy = function (result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory) {
   const server = message.guild
   const user = message.member
+  const quantity = 1
   result += 'You defeated the ' + enemy.MonsterName + ' in ' + server.name + '!\n'
   result += 'Here are the results:```\n'
-  result += 'Took ' + ed + ' HP from the enemy.\n'
-  result += 'Lost ' + pd + ' of your own HP.\n'
-  // if (enemy.reward) {
-  //   moogle.PlayerInfo[id]['items'].push(enemy.reward)
-  //   result += 'Obtained a ' + enemy.reward + '!\n'
-  // }
+  result += 'Took ' + enemyDamage + ' HP from the enemy.\n'
+  result += 'Lost ' + playerDamage + ' of your own HP.\n'
+  if (enemy.Item) {
+    if (playerInventory[message.guild.id + message.member.user.id + enemy.Item]) {
+      playerInventory[message.guild.id + message.member.user.id + enemy.Item].Amount[0] += quantity
+      fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
+    } else {
+      playerInventory[message.guild.id + message.member.user.id + enemy.Item] = new moogle.Item(enemy.Item, quantity)
+      fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
+      getD.Items.push(enemy.Item)
+    }
+    if (playerInventory[message.guild.id + message.member.user.id + enemy.Item].Amount > 1) {
+      message.channel.send(playerInventory[message.guild.id + message.member.user.id + enemy.Item].ItemName + ' has been given ' + quantity + ' ' + enemy.Item + 's.')
+    } else {
+      message.channel.send(playerInventory[message.guild.id + message.member.user.id + enemy.Item].ItemName + ' has been given ' + quantity + ' ' + enemy.Item + '.')
+    }
+    result += 'Obtained a ' + enemy.Item + '!\n'
+  }
   if (enemy.Exp) {
     getC.Exp += enemy.Exp
     result += 'Gained ' + enemy.Exp + ' experience!\n'

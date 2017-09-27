@@ -28,7 +28,8 @@ module.exports.run = function (monsters) {
       Def: 10,
       Exp: 20,
       Gold: 100,
-      Skill: 'none',
+      Items: `Potion`,
+      Skill: 'None',
       MonsterInfo: 'this is a noob Monster'
     }
     moogle.monsterslist[Mosterdata.MonsterName] = moogle.monsterslist[Mosterdata.MonsterName] || Mosterdata

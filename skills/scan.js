@@ -15,10 +15,11 @@ module.exports.run = function (Skillablity, SkillName, Skilllist) {
         const server = message.guild
         const embed = new Discord.RichEmbed()
         const enemy = server.__currentBattleEnemy
-
-        embed.setTitle(`Enemy's Data`)
-        embed.addField(`Name:${enemy.MonsterName} Level:${enemy.Level}`, `HP:${enemy.HP}\nATK:${enemy.Atk}\nDEF${enemy.Def}`)
-        message.author.send(embed)
+        if (server.__battleIsActive) {
+          embed.setTitle(`Enemy's Data`)
+          embed.addField(`Name:${enemy.MonsterName} Level:${enemy.Level}`, `HP:${enemy.HP}\nATK:${enemy.Atk}\nDEF:${enemy.Def}\nEXP:${enemy.Exp}\nGold:${enemy.Gold}\nItem:${enemy.Item}\nInfo:${enemy.Info}`)
+          message.author.send(embed)
+        }
       },
       SkillInfo: 'Scans enemy for info'
     }

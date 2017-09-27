@@ -26,10 +26,6 @@ module.exports.run = function (message, client, contents, userId, masterLevel, g
       message.channel.send("You can't give 0 items.")
       return
     }
-    if (quantity < 0) {
-      this.takeItem(itemIn, -1 * quantity)
-      return
-    }
     console.log(playerInventory)
     if (moogle.Itemlist[itemIn]) {
       if (playerInventory[message.guild.id + message.member.user.id + itemIn]) {
@@ -38,10 +34,7 @@ module.exports.run = function (message, client, contents, userId, masterLevel, g
       } else {
         playerInventory[message.guild.id + message.member.user.id + itemIn] = new moogle.Item(itemIn, quantity)
         fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
-       // getD.Items[message.guild.id + message.member.user.id + itemIn] = moogle.playerInventory[message.guild.id + message.member.user.id + itemIn]
         getD.Items.push(itemIn)
-        // getD.Items[itemIn] = getD.Items[itemIn] || moogle.Item
-        // getD.Items[itemIn].Amount[0] += quantity
       }
       if (playerInventory[message.guild.id + message.member.user.id + itemIn].Amount > 1) {
         message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' has been given ' + quantity + ' ' + itemIn + 's.')
