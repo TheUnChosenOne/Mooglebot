@@ -27,8 +27,8 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     message.delete()
   }
   const Commanddata = {
-    CommandName: `>Data`,
-    CommandInfo: `Gives info on your player`
+    CommandName: `**>Data**`,
+    CommandInfo: `**Gives info on your player**`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {

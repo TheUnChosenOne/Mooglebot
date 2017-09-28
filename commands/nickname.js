@@ -20,8 +20,8 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
   }
 
   const Commanddata = {
-    CommandName: `>ChangeName [Name]`,
-    CommandInfo: `Allows you to change your name`
+    CommandName: `**>ChangeName** __[**Name**]__`,
+    CommandInfo: `**Allows you to change your name**`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {

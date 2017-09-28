@@ -221,7 +221,7 @@ function getSkillListData (getC) {
   if (getC.Skill.length === 0) { var test2 = `you have no class` } else {
     for (var i = 0; i < getC.Skill.length; i++) {
       if (moogle.Skilllist[getC.Skill[i]] !== undefined) {
-        var test = `#:${i}Skill Name:${moogle.Skilllist[getC.Skill[i]].SkillName} MP Cost:${moogle.Skilllist[getC.Skill[i]].Mpcost}\nInfo:${moogle.Skilllist[getC.Skill[i]].SkillInfo}`
+        var test = `**Skill ID:** __${moogle.Skilllist[getC.Skill[i]].SkillId}__ **Skill Name:** __${moogle.Skilllist[getC.Skill[i]].SkillName}__ **MP Cost:** __${moogle.Skilllist[getC.Skill[i]].Mpcost}__\n**Info:** __${moogle.Skilllist[getC.Skill[i]].SkillInfo}__`
       }
       result += `${test}\n`
     }
@@ -233,7 +233,7 @@ function getShopItemData () {
   if (moogle.ShopItems.length === 0) { var test2 = `you have no class` } else {
     for (var i = 0; i < moogle.ShopItems.length; i++) {
       if (moogle.ItemShop[moogle.ShopItems[i]] !== undefined) {
-        var test = `Item Name:${moogle.ItemShop[moogle.ShopItems[i]].ItemName} Item Cost:${moogle.ItemShop[moogle.ShopItems[i]].Gold}\nItem Info:${moogle.ItemShop[moogle.ShopItems[i]].ItemInfo}`
+        var test = `**Item Name:** __${moogle.ItemShop[moogle.ShopItems[i]].ItemName}__ **Item Cost:** __${moogle.ItemShop[moogle.ShopItems[i]].Gold} Gold__\n**Item Info:** __${moogle.ItemShop[moogle.ShopItems[i]].ItemInfo}__`
       }
       result += `${test}\n`
     }

@@ -17,8 +17,8 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
   }
 
   const Commanddata = {
-    CommandName: `>Help`,
-    CommandInfo: `Gives info on all the commands`
+    CommandName: `**>Help**`,
+    CommandInfo: `**Gives info on all the commands**`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {

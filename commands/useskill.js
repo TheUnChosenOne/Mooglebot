@@ -19,13 +19,12 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
         message.channel.send('You may not use skills on enemies more than 5 levels below your own level. Kupo!')
         return
       }
-
       if (Skilllist[getC.Skill[skill]]) {
         if (!Skilllist[getC.Skill[skill]]) {
           message.channel.send(Skilllist[getC.Skill[skill]].SkillName + ' You do not have this ' + skill + '.')
           return
         }
-        Skillablity[Skilllist[getC.Skill[skill]].SkillId][skill].Effect(getC, getD, message, playerInventory)
+        Skillablity[Skilllist[getC.Skill[skill]].SkillId][getC.Skill[skill]].Effect(getC, getD, message, playerInventory)
    // moogle.takeskill(regex, getD, message)
       } else {
         message.channel.send('That skill does not exist.')
@@ -35,8 +34,8 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     }
   }
   const Commanddata = {
-    CommandName: `>UseSkill [number]`,
-    CommandInfo: `Allows you to use skills`
+    CommandName: `**>UseSkill** __[**Name**]__`,
+    CommandInfo: `**Allows you to use skills**`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {

@@ -27,8 +27,8 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     // saveData()
   }
   const Commanddata = {
-    CommandName: `>ChangeClass [Class Name]`,
-    CommandInfo: `Allows you to change your class`
+    CommandName: `**>ChangeClass** __[**ClassName**]__`,
+    CommandInfo: `**Allows you to change your class**`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {

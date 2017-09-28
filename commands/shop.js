@@ -7,11 +7,11 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     const embed = new Discord.RichEmbed()
     embed.setTitle(`Item Shop`)
     embed.addField(`Items`, getSI)
-    message.aurthor.send(embed)
+    message.author.send(embed)
   }
   const Commanddata = {
-    CommandName: `>Shop`,
-    CommandInfo: `Give a list of items to buy`
+    CommandName: `**>Shop**`,
+    CommandInfo: `**Give a list of items to buy**`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {

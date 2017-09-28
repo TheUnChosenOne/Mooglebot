@@ -28,16 +28,16 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     }
     console.log(playerInventory)
     if (moogle.Itemlist[itemIn]) {
-      if (getSI[itemIn]) {
-        if (getSI[itemIn].Gold < getD.Gold) {
+      if (getIS[itemIn]) {
+        if (getIS[itemIn].Gold > getD.Gold) {
           return message.channel.send(`You do not have the gold to spar`)
         }
         if (playerInventory[message.guild.id + message.member.user.id + itemIn]) {
-          getD.Gold -= getSI[itemIn].Gold
+          getD.Gold -= getIS[itemIn].Gold
           playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] += quantity
           fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
         } else {
-          getD.Gold -= getSI[itemIn].Gold
+          getD.Gold -= getIS[itemIn].Gold
           playerInventory[message.guild.id + message.member.user.id + itemIn] = new moogle.Item(itemIn, quantity)
           fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
           getD.Items.push(itemIn)
@@ -55,8 +55,8 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     }
   }
   const Commanddata = {
-    CommandName: `>BuyItems [ItemName]`,
-    CommandInfo: `Allows you to buy items`
+    CommandName: `**>BuyItems** __[**ItemName**]__`,
+    CommandInfo: `**Allows you to buy items**`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {

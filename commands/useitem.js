@@ -29,8 +29,8 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
   }
 
   const Commanddata = {
-    CommandName: `>UseItems [ItemName]`,
-    CommandInfo: `Allows you to use items`
+    CommandName: `>**UseItems** __[**ItemName**]__`,
+    CommandInfo: `**Allows you to use items**`
   }
   if (Commands[Commanddata.CommandName]) {
   } else {
