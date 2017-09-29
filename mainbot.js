@@ -512,21 +512,23 @@ moogle.summonMonster = function (server, name, lvl) {
   }
   console.log(level)
   server.__currentBattleEnemyLv = moogle.monsterlist[monster].Level + level
-  server.__currentBattleEnemy.atk = moogle.monsterlist[monster].Atk
-  server.__currentBattleEnemy.def = moogle.monsterlist[monster].Def
-  server.__currentBattleEnemy.health = moogle.monsterlist[monster].Hp[0]
-  if (server.__currentBattleEnemy.health <= 0) server.__currentBattleEnemy.health = 0
+  server.__currentBattleEnemy.atk = moogle.monsterlist[monster].Atk * server.__currentBattleEnemyLv
+  server.__currentBattleEnemy.def = moogle.monsterlist[monster].Def * server.__currentBattleEnemyLv
+  server.__currentBattleEnemy.health = moogle.monsterlist[monster].Hp[0] * server.__currentBattleEnemyLv
+  server.__currentBattleEnemy.exp = moogle.monsterlist[monster].Exp * server.__currentBattleEnemyLv
   // Variety Stats
+  if (server.__currentBattleEnemy.health <= 0) server.__currentBattleEnemy.health = 100
   server.__currentBattleEnemy.atk += Math.floor(Math.random() * 6) - 3
   server.__currentBattleEnemy.def += Math.floor(Math.random() * 6) - 3
   if (server.__currentBattleEnemy.atk <= 0) server.__currentBattleEnemy.atk = 1
   if (server.__currentBattleEnemy.def <= 0) server.__currentBattleEnemy.def = 1
+  if (server.__currentBattleEnemy.exp <= 0) server.__currentBattleEnemy.exp = 10
   // Setup Rest
   server.__currentBattleEnemyHp = server.__currentBattleEnemy.health
   server.__existingAttacks = []
   server.__existingVotes = []
   server.__votesForChange = 0
-  // console.log(levelInfo)
+  // console.log(levelInfo)* server.__currentBattleEnemyLv
   console.log(monster)
   embed.setThumbnail(server.me.avatarURL)
   embed.setTitle(`${moogle.botInfo[server.id + server.me.id].BotName}`)
@@ -676,15 +678,17 @@ moogle.CheckForLevelChange = function (userId, message) {
 
 moogle.OnLevelChange = function (userId, message) {
   const embed = new Discord.RichEmbed()
-  const attack = 1
-  const defance = 1
-  const gold = 100
-  const playername = moogle.playerInfo[message.guild.id + userId].PlayerName
   const level = moogle.classeslist[moogle.playerInfo[message.guild.id + userId].Class].Level
+  const attack = 1 * level
+  const defance = 1 * level
+  const gold = 100 * level
+  const playername = moogle.playerInfo[message.guild.id + userId].PlayerName
   const classname = moogle.classeslist[moogle.playerInfo[message.guild.id + userId].Class].ClassName
+
   moogle.classeslist[moogle.playerInfo[message.guild.id + userId].Class].Atk += (attack)
   moogle.classeslist[moogle.playerInfo[message.guild.id + userId].Class].Def += (defance)
   moogle.playerInfo[message.guild.id + userId].Gold += (gold)
+
   embed.setThumbnail(message.author.avatarURL)
   embed.setTitle(`${playername}`)
   embed.setDescription(`Congratulations!\n your ${classname} class is now level  ${level}.`)

@@ -21,7 +21,7 @@ module.exports.run = function (Skillablity, SkillName, Skilllist) {
           }
           getC.Mp[0] -= 5
           embed.setTitle(`Enemy's Data`)
-          embed.addField(`Name: ${enemy.MonsterName} Level: ${enemy.Level}`, `HP: ${enemy.Hp}\nATK: ${enemy.Atk}\nDEF: ${enemy.Def}\nEXP: ${enemy.Exp}\nGold:${enemy.Gold}\nItem: ${enemy.Items}\nInfo: ${enemy.MonsterInfo}`)
+          embed.addField(`Name: ${enemy.MonsterName} Level: ${server.__currentBattleEnemyLv}`, `HP: ${enemy.health}\nATK: ${enemy.atk}\nDEF: ${enemy.def}\nEXP: ${enemy.exp}\nGold:${enemy.Gold}\nItem: ${enemy.Items}\nInfo: ${enemy.MonsterInfo}`)
           message.author.send(embed)
         }
       },

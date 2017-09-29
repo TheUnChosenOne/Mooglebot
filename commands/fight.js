@@ -115,7 +115,7 @@ moogle.OnDamageEnemy = function (result, globResult, message, enemy, playerDamag
     }
     result += 'Obtained a ' + enemy.Item + '!\n'
   }
-  const exp = Math.floor(enemy.Exp * (enemyDamage / enemy.Hp))
+  const exp = Math.floor(enemy.exp * (enemyDamage / enemy.Hp))
   if (exp) {
     getC.Exp += exp
     result += 'Gained ' + exp + ' experience!\n'
@@ -158,8 +158,8 @@ moogle.OnKillEnemy = function (result, globResult, message, enemy, playerDamage,
     result += 'Obtained a ' + enemy.Item + '!\n'
   }
   if (enemy.Exp) {
-    getC.Exp += enemy.Exp
-    result += 'Gained ' + enemy.Exp + ' experience!\n'
+    getC.Exp += enemy.exp
+    result += 'Gained ' + enemy.exp + ' experience!\n'
    // c = true
   }
   if (enemy.Gold) {
