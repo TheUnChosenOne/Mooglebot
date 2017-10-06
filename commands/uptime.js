@@ -2,12 +2,11 @@ const Discord = require('discord.js')
 const util = require('util')
 const fs = require('fs')
 module.exports.run = function (message, client, contents) {
-  if (message.content.match(/>uptime/i)) {
-    message.channel.send(`I have been up for about ${msConversion(client.uptime)}. Kupo!`)
-    message.delete()
-  }
+    // if(message.content.match(/_uptime/i)){
+  message.channel.send(`I have been up for about ${msConversion(client.uptime)}.`)
+  message.delete()
+    // }
 }
-
 function msConversion (number) {
   if (number >= 31536000000) return `${Math.floor(number / 31536000000)} year${addS(number, 'year')} and ${ms2(number % 31536000000)}`
   else if (number >= 2592000000) return `${Math.floor(number / 2592000000)} month${addS(number, 'month')} and ${ms2(number % 2592000000)}`
@@ -35,3 +34,16 @@ function msConversion (number) {
     else return ``
   }
 }
+module.exports.help = function (Commands, CommandName) {
+
+  const Commanddata = {
+    CommandName: `**>uptime**`,
+    CommandInfo: `**Allows you to see how long the bots been running**`
+  }
+  if (Commands[Commanddata.CommandName]) {
+  } else {
+    Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+    CommandName.push(Commanddata.CommandName)
+  }
+}
+module.exports.getCommand = () => { return [['uptime', 'runtime', 'ut'], null] }

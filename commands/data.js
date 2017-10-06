@@ -26,6 +26,9 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     message.author.send({embed})
     message.delete()
   }
+}
+
+module.exports.help = function (Commands, CommandName) {
   const Commanddata = {
     CommandName: `**>Data**`,
     CommandInfo: `**Gives info on your player**`
@@ -36,3 +39,5 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     CommandName.push(Commanddata.CommandName)
   }
 }
+
+module.exports.getCommand = () => { return [['data', 'info', 'statuswindow', `statusw`], null] }

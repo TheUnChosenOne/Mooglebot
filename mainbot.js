@@ -32,6 +32,7 @@ moogle.guild = moogle.guild || []
 // const monsters = JSON.parse(fs.readFileSync('monsters.json')) || {}
 const contents = JSON.parse(fs.readFileSync('contents.json', moogle.catch)) || {}
 contents.banlist = contents.banlist || []
+contents.comstart = contents.comstart || '>'
 moogle.lvllist = moogle.lvllist || []
 moogle.Monsters = moogle.Monsters || []
 moogle.Items = moogle.Items || []
@@ -376,16 +377,90 @@ Client.on('message', (message) => {
 moogle.commands = function (message, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   const Commands = moogle.Commands
   const CommandName = moogle.CommandName
-  if (message.author !== Client.user && contains(contents.banlist, message.author.id) === false) {
-    if (message.content.match(/>(.*)/i)) {
-      for (let j = 0; j < moogle.commandlist.length; j++) {
-        try {
-          const cmd = require(`./commands/${moogle.commandlist[j]}`)
-          cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS)
-          // console.log(`${j}: ${moogle.commandlist[j]}`)
-        } catch (err) { message.channel.send(`ERROR: Command \`${moogle.commandlist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``) }
-      }
+
+  for (let j = 0; j < moogle.commandlist.length; j++) {
+    try {
+      let cmd = require('./commands/' + moogle.commandlist[j] + '')
+                // console.log(ifCommand(contents.comstart, cmd.getCommand()[0], cmd.getCommand()[1], message))
+      if (ifCommand(contents.comstart, cmd.getCommand()[0], cmd.getCommand()[1], message)) cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS)
+      cmd.help(Commands, CommandName)
+    } catch (err) {
+      message.channel.send(`ERROR: Command \`${moogle.commandlist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``)
+      console.warn(`|${moogle.commandlist[j]}|\n   -${clean(err)}`)
     }
+  }
+  // if (message.author !== Client.user && contains(contents.banlist, message.author.id) === false) {
+  //   if (message.content.match(/>(.*)/i)) {
+  //     contents.matchCommand(comstart, command, parameters, message)
+  //     for (let j = 0; j < moogle.commandlist.length; j++) {
+  //       try {
+  //         const cmd = require(`./commands/${moogle.commandlist[j]}`)
+  //         cmd.run(message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS)
+  //         // console.log(`${j}: ${moogle.commandlist[j]}`)
+  //       } catch (err) { message.channel.send(`ERROR: Command \`${moogle.commandlist[j]}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.\n\`\`\`js\n${clean(err)}\`\`\``) }
+  //     }
+  //   }
+  // }
+}
+
+const ifCommand = (comstart, command, parameters, message) => {
+  if (parameters !== null) {
+    if (parameters.constructor.name === `RegExp`) { parameters = String(parameters).match(/\/(.*)\//i)[1] }
+  } else parameters = ''
+  switch (command.constructor.name) {
+    case 'Array':
+      for (let ii = 0; ii < command.length; ii++) {
+        let regex = new RegExp(comstart + command[ii] + '\s*' + parameters, 'i')
+        if (message.content.toLowerCase().startsWith(comstart + command[ii].toLowerCase()) && regex.test(message.content)) {
+          return true
+          ii = command.length
+        };
+      }
+      // contents.matchCommand(comstart, command, parameters, message)
+      return false
+      break
+    case 'String':
+      let regex = new RegExp(comstart + command + ' ' + parameters)
+      return Boolean(message.content.toLowerCase().startsWith(comstart + command.toLowerCase()) && regex.test(message.content))
+      break
+    case 'RegExp':
+      let sw = command.match(/\/_(\S*)/i)
+      return Boolean(command.test(message.content) && message.content.toLowerCase().startsWith(comstart + sw.toLowerCase()))
+      break
+    default:
+      if (message.startsWith(comstart) || message.startsWith(content.comstart)) throw (`command inputed was not an Array, String, or RegExp: ${comstart} | ${command} | ${parameters}\n if you do not understand why this happened, contact <@!226163650635890688>.`)
+  }
+}
+
+contents.matchCommand = (comstart, command, parameters, message) => {
+  console.log(`${parameters} | ${command}: ${command.constructor.name}`)
+  if (parameters !== null) {
+    console.log(`${parameters.constructor.name}: ${parameters} | ${command}`)
+    if (parameters.constructor.name === `RegExp`) { parameters = String(parameters).match(/\/(.*)\//i)[1]; console.log(parameters) }
+  } else parameters = ''
+
+    {
+    case 'Array':
+      for (let ii = 0; ii < command.length; ii++) {
+        let regex = new RegExp(comstart + command[ii] + '\s*' + parameters, 'i')
+        console.log(`${message.content.toLowerCase()} =\n${comstart + command[ii].toLowerCase()} & ${regex} = ${regex.test(message.content)}`)
+        if (message.content.toLowerCase().startsWith(comstart + command[ii].toLowerCase()) && regex.test(message.content)) {
+          return regex
+          ii = command.length
+        };
+      }
+      return false
+      break
+    case 'String':
+      let regex = new RegExp(comstart + command + ' ' + parameters)
+      return regex
+      break
+    case 'RegExp':
+      let sw = command.match(/\/_(\S*)/i)
+      return Boolean(command.test(message.content) && message.content.toLowerCase().startsWith(comstart + sw.toLowerCase()))
+      break
+    default:
+      if (message.startsWith(comstart) || message.startsWith(content.comstart)) throw (`command inputed was not an Array, String, or RegExp: ${comstart} | ${command} | ${parameters}\n if you do not understand why this happened, contact <@!226163650635890688>.`)
   }
 }
 

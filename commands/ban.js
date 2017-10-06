@@ -28,3 +28,17 @@ function contains (a, obj) {
   }
   return false
 }
+
+module.exports.help = function (Commands, CommandName) {
+  // const Commanddata = {
+  //   CommandName: `????`,
+  //   CommandInfo: `????`
+  // }
+  // if (Commands[Commanddata.CommandName]) {
+  // } else {
+  //   Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+  //   CommandName.push(Commanddata.CommandName)
+  // }
+}
+
+module.exports.getCommand = () => { return [['uptime', 'runtime', 'ut'], null] }

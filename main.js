@@ -14,4 +14,3 @@ app.on('ready', function () {
 
   mainWindow.setResizable(false)
 })
-

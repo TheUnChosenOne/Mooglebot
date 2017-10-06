@@ -13,21 +13,26 @@ moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
 moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
 module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS) {
-  if (message.content.match(/>useitem (.*)/i) && message.content.startsWith('>useitem')) {
-    const regex = message.content.match(/>useitem (.*)/i)[1]
-    const itemIn = regex
-    if (moogle.Itemlist[itemIn]) {
-      if (!playerInventory[message.guild.id + message.member.user.id + itemIn]) {
-        message.channel.send(moogle.Itemlist[itemIn].ItemName + ' does not have any ' + itemIn + 's.')
-        return
-      }
-      getI[playerInventory[message.guild.id + message.member.user.id + itemIn].ItemId][itemIn].Effect(getC, getD, message, playerInventory)
-   // moogle.takeitem(regex, getD, message)
-    } else {
-      message.channel.send('That item does not exist.')
-    }
-  }
+ // const regex = message.content.match(/>useitem (.*)/i)[1]
+  if (message.content.match(/>useitem (.*)/i) && (String(message.content.match(/>useitem (.*)/i)[1])) === ``) var regex = String(message.content.match(/>useitem (.*)/i)[1])
+  else if (message.content.match(/>useitem (.*)/i) && regex !== `null`) regex = message.content.match(/>useitem (.*)/i)[1]
+  else return message.channel.send(`You must add a Item name >UseItem [Item Name]`)
+  const itemIn = regex
 
+  if (moogle.Itemlist[itemIn]) {
+    if (!playerInventory[message.guild.id + message.member.user.id + itemIn]) {
+      message.channel.send(moogle.Itemlist[itemIn].ItemName + ' does not have any ' + itemIn + 's.')
+      return
+    }
+    getI[playerInventory[message.guild.id + message.member.user.id + itemIn].ItemId][itemIn].Effect(getC, getD, message, playerInventory)
+   // moogle.takeitem(regex, getD, message)
+  } else {
+    message.channel.send('That item does not exist.')
+  }
+ // }
+}
+
+module.exports.help = function (Commands, CommandName) {
   const Commanddata = {
     CommandName: `>**UseItems** __[**ItemName**]__`,
     CommandInfo: `**Allows you to use items**`
@@ -38,3 +43,5 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     CommandName.push(Commanddata.CommandName)
   }
 }
+
+module.exports.getCommand = () => { return [['useitem', 'usei', 'applyitem', `applyi`], /(.*)/] }

@@ -1,10 +1,14 @@
 module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName) {
-  if (message.content.match(/>updateinfo (.*)/i)) {
-    const regex = message.content.match(/>updateinfo (.*)/i)[1]
-    getD.PlayerInfo = regex
-    message.author.send(`YourInfo has been chaned.\nlDo >data to see the change`)
-    message.delete()
-  }
+  if (message.content.match(/>updateinfo (.*)/i) && (String(message.content.match(/>updateinfo (.*)/i)[1])) === ``) var regex = String(message.content.match(/>updateinfo (.*)/i)[1])
+  else if (message.content.match(/>updateinfo (.*)/i) && regex !== `null`) regex = message.content.match(/>updateinfo (.*)/i)[1]
+  else return message.channel.send(`You must add a your info >updateinfo [info]`)
+
+  getD.PlayerInfo = regex
+  message.author.send(`YourInfo has been chaned.\nlDo >data to see the change`)
+  message.delete()
+}
+
+module.exports.help = function (Commands, CommandName) {
   const Commanddata = {
     CommandName: `>**UpdateInfo** __[**Info**]__`,
     CommandInfo: `__Allows you to change your Player Info__`
@@ -15,3 +19,5 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     CommandName.push(Commanddata.CommandName)
   }
 }
+
+module.exports.getCommand = () => { return [['updateinfo', 'updatei', 'chageinfo', 'chagei'], /(.*)/] }

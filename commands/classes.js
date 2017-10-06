@@ -14,7 +14,9 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     message.delete()
     message.author.send(embed)
   }
+}
 
+module.exports.help = function (Commands, CommandName) {
   const Commanddata = {
     CommandName: `**>ClassList**`,
     CommandInfo: `**Gives a list of Classes**`
@@ -25,3 +27,5 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     CommandName.push(Commanddata.CommandName)
   }
 }
+
+module.exports.getCommand = () => { return [['classlist', 'classl', 'cl'], null] }

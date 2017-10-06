@@ -13,36 +13,37 @@ moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
 moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
 module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory) {
-  if (message.content.match(/>takeitem (.*)/i) && message.content.startsWith('>takeitem')) {
-    const regex = message.content.match(/>takeitem (.*)/i)[1]
-    const itemIn = regex
-    const quantity = 1
-    getD.Items[itemIn] = moogle.playerInventory
-    console.log(itemIn + ` ` + quantity)
+  if (message.content.match(/>takeitem (.*)/i) && (String(message.content.match(/>takeitem (.*)/i)[1])) === ``) var regex = String(message.content.match(/>takeitem (.*)/i)[1])
+  else if (message.content.match(/>takeitem (.*)/i) && regex !== `null`) regex = message.content.match(/>takeitem (.*)/i)[1]
+  else return message.channel.send(`You must add a Item Name >TakeItem [Item_name]`)
+
+  const itemIn = regex
+  const quantity = 1
+  getD.Items[itemIn] = moogle.playerInventory
+  console.log(itemIn + ` ` + quantity)
 
     // check for errors in function call.
-    if (typeCheck('takeItem', itemIn, 'string') || typeCheck('takeItem', quantity, 'number')) return
-    if (quantity === 0) {
-      message.channel.send("You can't take 0 items.")
-      return
-    }
-    if (!getD.Items[itemIn]) {
-      message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' does not have any ' + itemIn + 's.')
-      return
-    }
-    if (quantity > playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0]) {
-      message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' does not have enough ' + itemIn + 's.')
-      return
-    }
-    playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] -= quantity
+  if (typeCheck('takeItem', itemIn, 'string') || typeCheck('takeItem', quantity, 'number')) return
+  if (quantity === 0) {
+    message.channel.send("You can't take 0 items.")
+    return
+  }
+  if (!getD.Items[itemIn]) {
+    message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' does not have any ' + itemIn + 's.')
+    return
+  }
+  if (quantity > playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0]) {
+    message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' does not have enough ' + itemIn + 's.')
+    return
+  }
+  playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] -= quantity
+  message.channel.send(quantity + '  ' + itemIn + 's.' + ' has been removed ')
+  fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
+  if (playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] === 0) {
     message.channel.send(quantity + '  ' + itemIn + 's.' + ' has been removed ')
+    playerInventory[message.guild.id + message.member.user.id + itemIn] = undefined
+    getD.Items.splice(itemIn)
     fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
-    if (playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] === 0) {
-      message.channel.send(quantity + '  ' + itemIn + 's.' + ' has been removed ')
-      playerInventory[message.guild.id + message.member.user.id + itemIn] = undefined
-      getD.Items.splice(itemIn)
-      fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
-    }
   }
 }
 moogle.notMe = function (message) {
@@ -54,3 +55,17 @@ function typeCheck (source, input, expected) {
     return true
   } else return false
 }
+
+module.exports.help = function (Commands, CommandName) {
+  // const Commanddata = {
+  //   CommandName: `????`,
+  //   CommandInfo: `????`
+  // }
+  // if (Commands[Commanddata.CommandName]) {
+  // } else {
+  //   Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+  //   CommandName.push(Commanddata.CommandName)
+  // }
+}
+
+module.exports.getCommand = () => { return [['takeitem', 'takei', 'removeitem', 'removei'], /(.*)/] }

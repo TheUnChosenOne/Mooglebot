@@ -8,14 +8,14 @@ const moogle = {}
 // const CommandNames = moogle.CommandName || []
 
 module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl) {
-  if (message.content.match(/>help/i)) {
-    const embed = new Discord.RichEmbed()
+  const embed = new Discord.RichEmbed()
     .setTitle(`MoogleBot´s Command List`)
     .addField(`Command Name and Command Info`, getCd)
-    message.delete()
-    message.author.send(embed)
-  }
+  message.delete()
+  message.author.send(embed)
+}
 
+module.exports.help = function (Commands, CommandName) {
   const Commanddata = {
     CommandName: `**>Help**`,
     CommandInfo: `**Gives info on all the commands**`
@@ -26,3 +26,5 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     CommandName.push(Commanddata.CommandName)
   }
 }
+
+module.exports.getCommand = () => { return [['help', 'helpme', '?'], null] }

@@ -9,6 +9,9 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     embed.addField(`Items`, getSI)
     message.author.send(embed)
   }
+}
+
+module.exports.help = function (Commands, CommandName) {
   const Commanddata = {
     CommandName: `**>Shop**`,
     CommandInfo: `**Give a list of items to buy**`
@@ -19,3 +22,5 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     CommandName.push(Commanddata.CommandName)
   }
 }
+
+module.exports.getCommand = () => { return [['shop', 'store', 'market'], null] }

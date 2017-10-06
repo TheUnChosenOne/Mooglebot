@@ -1,5 +1,17 @@
 module.exports.run = function (message, client, contents) {
-  if (message.content.match(/>addbot (.*)/i)) {
-    const regex = message.content.match(/>addbot (.*)/i)[1]
-  }
+
 }
+
+module.exports.help = function (Commands, CommandName) {
+  // const Commanddata = {
+  //   CommandName: `????`,
+  //   CommandInfo: `????`
+  // }
+  // if (Commands[Commanddata.CommandName]) {
+  // } else {
+  //   Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+  //   CommandName.push(Commanddata.CommandName)
+  // }
+}
+
+module.exports.getCommand = () => { return [['addbot', 'addb', 'ab'], /(.*)/] }

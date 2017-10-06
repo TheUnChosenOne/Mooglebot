@@ -10,82 +10,73 @@ moogle.monsterlist = JSON.parse(fs.readFileSync('monsterslist.json')) || {}
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 
 module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist) {
-  if (message.content.match(/>fight (.*)/i) && message.content.startsWith('>fight')) {
-    const regex = message.content.match(/>fight (.*)/i)[1]
+  if (message.content.match(/>fight (.*)/i) && (String(message.content.match(/>fight (.*)/i)[1])) === ``) var regex = String(message.content.match(/>fight (.*)/i)[1])
+  else if (message.content.match(/>fight (.*)/i) && regex !== `null`) regex = message.content.match(/>fight (.*)/i)[1]
+  else return message.channel.send(`You must add a power >fight [power]`)
 
-    const server = message.guild
-    const user = message.member
-    if (getD.isDead !== false) {
-      message.author.send('You cannot fight enemies while dead. Kupo!')
-      return
-    }
-    if (getC.Level - 5 > server.__currentBattleEnemyLv) {
-      message.author.send('You may not fight enemies more than 5 levels below your own level. Kupo!')
-      return
-    }
-    let result = ''
-    let globResult = ''
+  const server = message.guild
+  const user = message.member
+  if (getD.isDead !== false) {
+    message.author.send('You cannot fight enemies while dead. Kupo!')
+    return
+  }
+  if (getC.Level - 5 > server.__currentBattleEnemyLv) {
+    message.author.send('You may not fight enemies more than 5 levels below your own level. Kupo!')
+    return
+  }
+  let result = ''
+  let globResult = ''
      // let checkForLevelChange = false
-    if (server.__battleIsActive && regex.length > 0 && (parseWhole(regex) || 1) > 0) {
-      const power = parseWhole(regex) || 1
-      const enemy = server.__currentBattleEnemy
-      if (server.__existingAttacks.includes(getD.PlayerId)) {
-        user.send('You have already attacked the ' + enemy.MonsterName + ' in ' + server.name + '!').then(function (msg) {
-          message.delete()
-        }).catch(console.error)
-        return
-      }
-      const playerDamage = Math.floor(power * (enemy.Atk / getC.Def))
-      const enemyDamage = Math.floor(power * (getC.Atk / enemy.Def))
-      getC.Hp[0] -= playerDamage
-      console.log(`${user.user.username} used >Fight ${power} on ${server.__currentBattleEnemy.MonsterName} and did ${enemyDamage} while taking ${playerDamage}`)
-      if (getC.Hp[0] >= 0) {
-        server.__currentBattleEnemyHp -= enemyDamage
-        if (server.__currentBattleEnemyHp <= 0) {
-          console.log(`dead monster`)
-          const someStuff = moogle.OnKillEnemy(result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory)
-          result = someStuff[0]
-          globResult = someStuff[1]
+  if (server.__battleIsActive && regex.length > 0 && (parseWhole(regex) || 1) > 0) {
+    const power = parseWhole(regex) || 1
+    const enemy = server.__currentBattleEnemy
+    if (server.__existingAttacks.includes(getD.PlayerId)) {
+      user.send('You have already attacked the ' + enemy.MonsterName + ' in ' + server.name + '!').then(function (msg) {
+        message.delete()
+      }).catch(console.error)
+      return
+    }
+    const playerDamage = Math.floor(power * (enemy.Atk / getC.Def))
+    const enemyDamage = Math.floor(power * (getC.Atk / enemy.Def))
+    getC.Hp[0] -= playerDamage
+    console.log(`${user.user.username} used >Fight ${power} on ${server.__currentBattleEnemy.MonsterName} and did ${enemyDamage} while taking ${playerDamage}`)
+    if (getC.Hp[0] >= 0) {
+      server.__currentBattleEnemyHp -= enemyDamage
+      if (server.__currentBattleEnemyHp <= 0) {
+        console.log(`dead monster`)
+        const someStuff = moogle.OnKillEnemy(result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory)
+        result = someStuff[0]
+        globResult = someStuff[1]
          // checkForLevelChange = someStuff[2]
-        } else {
-          const someStuff = moogle.OnDamageEnemy(result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory)
-          result = someStuff[0]
-          globResult = someStuff[1]
+      } else {
+        const someStuff = moogle.OnDamageEnemy(result, globResult, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory)
+        result = someStuff[0]
+        globResult = someStuff[1]
            // checkForLevelChange = someStuff[2]
-        }
       }
-      const results = moogle.CheckPlayerDeath(result, globResult, message, enemy, server, user, getC, getD)
-      result = results[0]
-      globResult = results[1]
-      console.log(`playerdead`)
-    } else {
-      result = 'There is no enemy in ' + server.name + ' right now.'
     }
-    console.log(regex.length)
-    if (regex.length === 0) {
-      result = 'You also need to include how much power to place in your attack!'
-    }
-    if (globResult) {
-      moogle.SendLog(server, message.channel, globResult)
-    }
+    const results = moogle.CheckPlayerDeath(result, globResult, message, enemy, server, user, getC, getD)
+    result = results[0]
+    globResult = results[1]
+    console.log(`playerdead`)
+  } else {
+    result = 'There is no enemy in ' + server.name + ' right now.'
+  }
+  console.log(regex.length)
+  if (regex.length === 0) {
+    result = 'You also need to include how much power to place in your attack!'
+  }
+  if (globResult) {
+    moogle.SendLog(server, message.channel, globResult)
+  }
     // if (checkForLevelChange) {
     //   moogle.CheckForLevelChange(user, message)
     // }
-    user.send(result).then(function (msg) {
-      message.delete()
-    }).catch(console.error)
-    console.log(globResult)
-    console.log(getC.Hp[0])
-  }
-  const Commanddata = {
-    CommandName: `>Fight [Power#]`,
-    CommandInfo: `Allows you to fight monsters`
-  }
-  if (Commands[Commanddata.CommandName]) {
-  } else {
-    Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
-    CommandName.push(Commanddata.CommandName)
-  }
+  user.send(result).then(function (msg) {
+    message.delete()
+  }).catch(console.error)
+  console.log(globResult)
+  console.log(getC.Hp[0])
 }
 
 // battle resalts
@@ -216,3 +207,17 @@ moogle.Item = function (itemIn, quantity) {
   this.ItemId = moogle.Itemlist[itemIn].ItemId
   this.Amount = [quantity, 100]
 }
+
+module.exports.help = function (Commands, CommandName) {
+  const Commanddata = {
+    CommandName: `>Fight [Power#]`,
+    CommandInfo: `Allows you to fight monsters`
+  }
+  if (Commands[Commanddata.CommandName]) {
+  } else {
+    Commands[Commanddata.CommandName] = Commands[Commanddata.CommandName] || Commanddata
+    CommandName.push(Commanddata.CommandName)
+  }
+}
+
+module.exports.getCommand = () => { return [['fight', 'box', 'dual'], /(.*)/] }
