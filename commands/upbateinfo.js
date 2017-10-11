@@ -1,4 +1,4 @@
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>updateinfo (.*)/i) && (String(message.content.match(/>updateinfo (.*)/i)[1])) === ``) var regex = String(message.content.match(/>updateinfo (.*)/i)[1])
   else if (message.content.match(/>updateinfo (.*)/i) && regex !== `null`) regex = message.content.match(/>updateinfo (.*)/i)[1]
   else return message.channel.send(`You must add a your info >updateinfo [info]`)

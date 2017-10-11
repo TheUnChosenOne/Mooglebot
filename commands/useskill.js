@@ -4,7 +4,7 @@ const fs = require('fs')
 
 let moogle = {}
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   const server = message.guild
   if (server.__battleIsActive) {
     if (message.content.match(/>applyskill (.*)/i) && (String(message.content.match(/>applyskill (.*)/i)[1])) === ``) var regex = String(message.content.match(/>applyskill (.*)/i)[1])
@@ -34,6 +34,7 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
   } else {
     message.channel.send('There is no enemy in ' + server.name + ' right now.')
   }
+  message.delete()
 }
 moogle.notMe = function (message) {
   message.channel.send('Hey! You are not my master!')

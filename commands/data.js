@@ -8,7 +8,7 @@ moogle.playerInfo = JSON.parse(fs.readFileSync('playerInfo.json', moogle.catch))
 moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json', moogle.catch)) || {}
 moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>data/i)) {
     const l = getC.Level
     const expNeded = masterLevel[l].Exp - getC.Exp

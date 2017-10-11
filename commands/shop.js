@@ -2,13 +2,14 @@
 const Discord = require('discord.js')
 const util = require('util')
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>shop/i)) {
     const embed = new Discord.RichEmbed()
     embed.setTitle(`Item Shop`)
     embed.addField(`Items`, getSI)
     message.author.send(embed)
   }
+  message.delete()
 }
 
 module.exports.help = function (Commands, CommandName) {

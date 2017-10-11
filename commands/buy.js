@@ -13,13 +13,13 @@ moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
 moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || []
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
-  if (message.content.match(/>buyitem (.*)/i) && (String(message.content.match(/>buyitem (.*)/i)[1])) === ``) var regex = String(message.content.match(/>buyitem (.*)/i)[1])
-  else if (message.content.match(/>buyitem (.*)/i) && regex !== `null`) regex = message.content.match(/>buyitem (.*)/i)[1]
-  else return message.channel.send(`You must add a Item Name >buyitem [Item_Name]`)
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
+  if (message.content.match(/>buyitem (\S*) (.*)/i) && (String(message.content.match(/>buyitem (\S*) (.*)/i)[2])) === ``) var regex = String(message.content.match(/>buyitem (\S*) (.*)/i)[1])
+  else if (message.content.match(/>buyitem (\S*) (.*)/i) && regex !== ``) regex = message.content.match(/>buyitem (\S*) (.*)/i)[1]
+  else return message.channel.send(`You must add a Item Name >buyitem [#] [Item_Name] [#]`)
 
   const itemIn = regex
-  const quantity = 1
+  const quantity = Number(message.content.match(/>buyitem (\S*) (.*)/i)[2])
 
   console.log(itemIn + ` ` + quantity)
   //  check for errors in function call.
@@ -28,18 +28,27 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
     message.channel.send("You can't give 0 items.")
     return
   }
+  if (isNaN(Number(itemIn)) === false) {
+    message.channel.send('must be a name.')
+    return
+  }
+
+  if (isNaN(quantity) !== false) {
+    message.channel.send('must be a number.')
+    return
+  }
   console.log(playerInventory)
   if (moogle.Itemlist[itemIn]) {
     if (getIS[itemIn]) {
-      if (getIS[itemIn].Gold > getD.Gold) {
+      if (getIS[itemIn].Gold * quantity > getD.Gold) {
         return message.channel.send(`You do not have the gold to spar`)
       }
       if (playerInventory[message.guild.id + message.member.user.id + itemIn]) {
-        getD.Gold -= getIS[itemIn].Gold
+        getD.Gold -= getIS[itemIn].Gold * quantity
         playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] += quantity
         fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
       } else {
-        getD.Gold -= getIS[itemIn].Gold
+        getD.Gold -= getIS[itemIn].Gold * quantity
         playerInventory[message.guild.id + message.member.user.id + itemIn] = new moogle.Item(itemIn, quantity)
         fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
         getD.Items.push(itemIn)
@@ -55,6 +64,7 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
   } else {
     message.channel.send('That item does not exist.')
   }
+  message.delete()
 }
 
 moogle.notMe = function (message) {
@@ -75,7 +85,7 @@ moogle.Item = function (itemIn, quantity) {
 
 module.exports.help = function (Commands, CommandName) {
   const Commanddata = {
-    CommandName: `**>BuyItems** __[**ItemName**]__`,
+    CommandName: `**>BuyItems** __[**ItemName**] [**#**]__`,
     CommandInfo: `**Allows you to buy items**`
   }
   if (Commands[Commanddata.CommandName]) {
@@ -85,4 +95,4 @@ module.exports.help = function (Commands, CommandName) {
   }
 }
 
-module.exports.getCommand = () => { return [['buyitem', 'buyi', 'bi'], /(.*)/] }
+module.exports.getCommand = () => { return [['buyitem', 'buyi', 'bi'], /(\S*)/, /(.*)/] }

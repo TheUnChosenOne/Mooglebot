@@ -1,7 +1,7 @@
 const Discord = require('discord.js')
 const util = require('util')
 const fs = require('fs')
-module.exports.run = function (message, client, contents) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>Ban (.*)/i)) {
     const bl = Array.from(message.mentions.users.values()).map(element => element.id)
     console.log(bl)

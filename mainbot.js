@@ -30,7 +30,7 @@ moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || 
 
 moogle.guild = moogle.guild || []
 // const monsters = JSON.parse(fs.readFileSync('monsters.json')) || {}
-const contents = JSON.parse(fs.readFileSync('contents.json', moogle.catch)) || {}
+const contents = JSON.parse(fs.readFileSync('contents.json')) || {}
 contents.banlist = contents.banlist || []
 contents.comstart = contents.comstart || '>'
 moogle.lvllist = moogle.lvllist || []
@@ -258,7 +258,7 @@ function saveData () {
   moogle.classlist = fs.readdirSync('classes')
   fs.writeFileSync('playerInfo.json', JSON.stringify(moogle.playerInfo))
   fs.writeFileSync('botInfo.json', JSON.stringify(moogle.botInfo))
-  fs.writeFileSync('classeslist.json', JSON.stringify(moogle.classeslist), moogle.catch)
+  fs.writeFileSync('classeslist.json', JSON.stringify(moogle.classeslist))
 }
 
 function clean (text) {
@@ -313,9 +313,18 @@ Client.on('guildMemberAdd', (member) => {
 Client.on('message', (message) => {
   Client.user.setPresence({ status: 'online', game: { name: `for: ${msConversion(Client.uptime)}` } })
   // message.guild.me.setNickname(`[${contents.deployed}]${contents.version}`);
-  const user = message.member || message.author
+  const isServer = !!message.guild
+  let user = isServer ? message.member : message.author
+  let name = isServer ? user.displayName : user.username
+  if (isServer && message.mentions.members.size > 0) {
+    user = message.mentions.members.first()
+    name = user.displayName
+    if (user === true) {
+      return
+    }
+  }
   // console.log(message.author)
-  const userId = user.id || user.user.id
+  const userId = user.id
   const username = user.username || user.user.username
   const masterLevel = moogle.lvllist
   const test = `Kupo!`
@@ -331,10 +340,12 @@ Client.on('message', (message) => {
   const Skilllist = moogle.Skilllist
 
   moogle.eval(message)
+
   if (message.channel.type !== `dm`) {
+    if (user.user.bot !== false) return
     const userbot = user.user.bot
-    console.log(`${username} ${userId} ${userbot} ${message.channel.type} ${message.channel.name || message.channel} ${message.channel.id} ${message}  ${test} ${moogle.GetDate()} Up-Time: ${msConversion(Client.uptime)}`)
-    if (message.member.user.bot === false) {
+    console.log(`${username} ${userId} ${userbot} ${message.channel.type} ${message.channel.name || message.channel} ${message.channel.id} ${message}  ${test} ${moogle.GetDate()} Up-Time: ${msConversion(Client.uptime)}}`)
+    if (user.user.bot === false) {
       const getD = getData(userId, message)
       const getC = getClassData(userId, message)
       const guildId = message.guild.id
@@ -347,6 +358,7 @@ Client.on('message', (message) => {
       moogle.CheckForLevelChange(userId, message)
     }
   } else {
+    if (user.bot !== false) return
     const userbot = user.bot
     console.log(`${username} ${userId} ${userbot} ${message.channel.type} ${message.channel.name || message.channel} ${message} ${moogle.GetDate()} Up-Time: ${msConversion(Client.uptime)}`)
     if (message.author.bot === false) {
@@ -367,7 +379,7 @@ Client.on('message', (message) => {
 
   // console.log(getData(userId, message))
 
-  fs.writeFile('contents.json', JSON.stringify(contents), moogle.catch)
+  fs.writeFile('contents.json', JSON.stringify(contents))
   // console.log('I am ready! ' + Client.guilds.array())
   console.log(user.nickname)
 })
@@ -422,38 +434,6 @@ const ifCommand = (comstart, command, parameters, message) => {
     case 'String':
       let regex = new RegExp(comstart + command + ' ' + parameters)
       return Boolean(message.content.toLowerCase().startsWith(comstart + command.toLowerCase()) && regex.test(message.content))
-      break
-    case 'RegExp':
-      let sw = command.match(/\/_(\S*)/i)
-      return Boolean(command.test(message.content) && message.content.toLowerCase().startsWith(comstart + sw.toLowerCase()))
-      break
-    default:
-      if (message.startsWith(comstart) || message.startsWith(content.comstart)) throw (`command inputed was not an Array, String, or RegExp: ${comstart} | ${command} | ${parameters}\n if you do not understand why this happened, contact <@!226163650635890688>.`)
-  }
-}
-
-contents.matchCommand = (comstart, command, parameters, message) => {
-  console.log(`${parameters} | ${command}: ${command.constructor.name}`)
-  if (parameters !== null) {
-    console.log(`${parameters.constructor.name}: ${parameters} | ${command}`)
-    if (parameters.constructor.name === `RegExp`) { parameters = String(parameters).match(/\/(.*)\//i)[1]; console.log(parameters) }
-  } else parameters = ''
-
-    {
-    case 'Array':
-      for (let ii = 0; ii < command.length; ii++) {
-        let regex = new RegExp(comstart + command[ii] + '\s*' + parameters, 'i')
-        console.log(`${message.content.toLowerCase()} =\n${comstart + command[ii].toLowerCase()} & ${regex} = ${regex.test(message.content)}`)
-        if (message.content.toLowerCase().startsWith(comstart + command[ii].toLowerCase()) && regex.test(message.content)) {
-          return regex
-          ii = command.length
-        };
-      }
-      return false
-      break
-    case 'String':
-      let regex = new RegExp(comstart + command + ' ' + parameters)
-      return regex
       break
     case 'RegExp':
       let sw = command.match(/\/_(\S*)/i)
@@ -897,4 +877,4 @@ moogle.eval = function (message) {
   }
 }
 
-Client.login('')
+Client.login('MzQyMDAwOTg1NDY5NjE2MTMw.DK_0FA.XYOrgBij05ytOs7ZVsXKFG0wrmY')

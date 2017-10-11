@@ -6,7 +6,7 @@ const moogle = {}
 
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>defaltchannel (.*)/i) && (String(message.content.match(/>defaltchannel (.*)/i)[1])) === ``) var regex = String(message.content.match(/>defaltchannel (.*)/i)[1])
   else if (message.content.match(/>defaltchannel (.*)/i) && regex !== `null`) regex = message.content.match(/>defaltchannel (.*)/i)[1]
   else return message.channel.send(`You must add a Channel Id >defaltchannel [Channel_Id]`)

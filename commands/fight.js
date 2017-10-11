@@ -9,7 +9,7 @@ moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json')) || {}
 moogle.monsterlist = JSON.parse(fs.readFileSync('monsterslist.json')) || {}
 moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>fight (.*)/i) && (String(message.content.match(/>fight (.*)/i)[1])) === ``) var regex = String(message.content.match(/>fight (.*)/i)[1])
   else if (message.content.match(/>fight (.*)/i) && regex !== `null`) regex = message.content.match(/>fight (.*)/i)[1]
   else return message.channel.send(`You must add a power >fight [power]`)

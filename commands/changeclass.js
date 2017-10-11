@@ -7,7 +7,7 @@ let moogle = {}
 moogle.playerInfo = JSON.parse(fs.readFileSync('playerInfo.json', moogle.catch)) || {}
 moogle.classeslist = JSON.parse(fs.readFileSync('classeslist.json', moogle.catch)) || {}
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>chaneclass (.*)/i) && (String(message.content.match(/>chaneclass (.*)/i)[1])) === ``) var regex = String(message.content.match(/>chaneclass (.*)/i)[1])
   else if (message.content.match(/>chaneclass (.*)/i) && regex !== `null`) regex = message.content.match(/>chaneclass (.*)/i)[1]
   else return message.channel.send(`You must add a Class Name >chaneclass [Class_Name]`)

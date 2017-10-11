@@ -2,7 +2,7 @@ const Discord = require('discord.js')
 const util = require('util')
 const fs = require('fs')
 let moogle = {}
-module.exports.run = function (message, client, contents) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.author.id === '184650850688434176') {
     if (message.content.match(/>reload (.*)/i) && (String(message.content.match(/>reload (.*)/i)[1])) === ``) var regex = String(message.content.match(/>setmaxlevel (.*)/i)[1])
     else if (message.content.match(/>reload (.*)/i) && regex !== `null`) regex = message.content.match(/>reload (.*)/i)[1]

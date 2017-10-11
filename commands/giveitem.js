@@ -13,39 +13,52 @@ moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
 moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || []
 
-module.exports.run = function (message, client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory) {
-  if (message.content.match(/>giveitem (.*)/i) && (String(message.content.match(/>giveitem (.*)/i)[1])) === ``) var regex = String(message.content.match(/>setmaxlevel (.*)/i)[1])
-  else if (message.content.match(/>giveitem (.*)/i) && regex !== `null`) regex = message.content.match(/>giveitem (.*)/i)[1]
-  else return message.channel.send(`You must add a item name >giveitem [item_name]`)
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
+  if (message.content.match(/>giveitem (\S*) (\S*) (.*)/i) && (String(message.content.match(/>giveitem (\S*) (\S*) (.*)/i)[2])) === ``) var regex = String(message.content.match(/>giveitem (\S*) (\S*) (.*)/i)[1])
+  else if (message.content.match(/>giveitem (\S*) (\S*) (.*)/i) && regex !== ``) regex = message.content.match(/>giveitem (\S*) (\S*) (.*)/i)[1]
+  else return message.channel.send(`You must add a Item Name amount and mention player  >giveitem [Item_Name] [#] [mention]`)
+ // message.channel.send(message.content.match(/>giveitem (\S*) (\S*) (.*)/i)[3])
 
   const itemIn = regex
-  const quantity = 1
+  const quantity = Number(message.content.match(/>giveitem (\S*) (\S*) (.*)/i)[2])
 
   console.log(itemIn + ` ` + quantity)
   //  check for errors in function call.
   if (typeCheck('giveItem', itemIn, 'string') || typeCheck('giveItem', quantity, 'number')) return
   if (quantity === 0) {
-    message.channel.send("You can't give 0 items.")
+    message.channel.send("You can't take 0 items.")
     return
   }
+
+  if (isNaN(Number(itemIn)) === false) {
+    message.channel.send('must be a name.')
+    return
+  }
+
+  if (isNaN(quantity) !== false) {
+    message.channel.send('must be a number.')
+    return
+  }
+
   console.log(playerInventory)
   if (moogle.Itemlist[itemIn]) {
-    if (playerInventory[message.guild.id + message.member.user.id + itemIn]) {
-      playerInventory[message.guild.id + message.member.user.id + itemIn].Amount[0] += quantity
+    if (playerInventory[message.guild.id + userId + itemIn]) {
+      playerInventory[message.guild.id + userId + itemIn].Amount[0] += quantity
       fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
     } else {
-      playerInventory[message.guild.id + message.member.user.id + itemIn] = new moogle.Item(itemIn, quantity)
+      playerInventory[message.guild.id + userId + itemIn] = new moogle.Item(itemIn, quantity)
       fs.writeFileSync('playerinventory.json', JSON.stringify(playerInventory))
       getD.Items.push(itemIn)
     }
-    if (playerInventory[message.guild.id + message.member.user.id + itemIn].Amount > 1) {
-      message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' has been given ' + quantity + ' ' + itemIn + 's.')
+    if (playerInventory[message.guild.id + userId + itemIn].Amount > 1) {
+      message.channel.send(getD.PlayerName + ' has been given ' + quantity + ' ' + itemIn + 's.')
     } else {
-      message.channel.send(playerInventory[message.guild.id + message.member.user.id + itemIn].ItemName + ' has been given ' + quantity + ' ' + itemIn + '.')
+      message.channel.send(getD.PlayerName + ' has been given ' + quantity + ' ' + itemIn + '.')
     }
   } else {
     message.channel.send('That item does not exist.')
   }
+  message.delete()
 }
 
 moogle.notMe = function (message) {

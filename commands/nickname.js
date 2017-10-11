@@ -6,7 +6,7 @@ const moogle = {}
 
 // const CommandNames = moogle.CommandName || []
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>changename (.*)/i) && (String(message.content.match(/>changename (.*)/i)[1])) === ``) var regex = String(message.content.match(/>setmaxlevel (.*)/i)[1])
   else if (message.content.match(/>changename (.*)/i) && regex !== `null`) regex = message.content.match(/>changename (.*)/i)[1]
   else return message.channel.send(`You must add a name >changename [name]`)
@@ -19,6 +19,7 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
   }
   message.member.setNickname(lvl + getD.PlayerName)
   message.author.send(`your nickname has been chaned`)
+  message.delete()
 }
 
 module.exports.help = function (Commands, CommandName) {

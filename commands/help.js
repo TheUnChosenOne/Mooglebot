@@ -7,7 +7,7 @@ const moogle = {}
 
 // const CommandNames = moogle.CommandName || []
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   const embed = new Discord.RichEmbed()
     .setTitle(`MoogleBot´s Command List`)
     .addField(`Command Name and Command Info`, getCd)

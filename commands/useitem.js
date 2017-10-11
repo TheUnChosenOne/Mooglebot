@@ -12,7 +12,7 @@ moogle.defaltchannel = JSON.parse(fs.readFileSync('defaltchannel.json')) || {}
 moogle.Itemlist = JSON.parse(fs.readFileSync('Itemlist.json')) || {}
 moogle.playerInventory = JSON.parse(fs.readFileSync('playerinventory.json')) || {}
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl, Skillablity, SkillName, Skilllist, getS) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
  // const regex = message.content.match(/>useitem (.*)/i)[1]
   if (message.content.match(/>useitem (.*)/i) && (String(message.content.match(/>useitem (.*)/i)[1])) === ``) var regex = String(message.content.match(/>useitem (.*)/i)[1])
   else if (message.content.match(/>useitem (.*)/i) && regex !== `null`) regex = message.content.match(/>useitem (.*)/i)[1]
@@ -29,7 +29,7 @@ module.exports.run = function (message, Client, contents, userId, masterLevel, g
   } else {
     message.channel.send('That item does not exist.')
   }
- // }
+  message.delete()
 }
 
 module.exports.help = function (Commands, CommandName) {

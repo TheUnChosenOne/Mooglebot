@@ -6,7 +6,7 @@ const moogle = {}
 
 // const CommandNames = moogle.CommandName || []
 
-module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, Commands, CommandName, getCd, getCl) {
+module.exports.run = function (message, Client, contents, userId, masterLevel, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS) {
   if (message.content.match(/>classlist/i)) {
     const embed = new Discord.RichEmbed()
     .setTitle(`MoogleBot´s Class List`)
