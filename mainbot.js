@@ -877,4 +877,4 @@ moogle.eval = function (message) {
   }
 }
 
-Client.login('MzQyMDAwOTg1NDY5NjE2MTMw.DK_0FA.XYOrgBij05ytOs7ZVsXKFG0wrmY')
+Client.login('')
