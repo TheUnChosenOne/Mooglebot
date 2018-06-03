@@ -1,3 +1,0 @@
-{
-    "ignore": ["contents.json","botInfo.json",  "commands", "playerInfo.json","monsters.json", "items", "monsters", "classes", "skills", "monsterslist.json", "classeslist.json", "addonModuals", "Itemlist.json", "defaltchannel.json", "playerinventory.json"]
-} 
