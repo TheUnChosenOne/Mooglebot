@@ -2,6 +2,8 @@
 
 
 export function getData(userID, guildID, playerInfo) {
+	
+	//console.log(`${guildID} ${userID} gitdata`)
 	//console.log(playerInfo)
 	//console.log(message.guild.id)
 	//console.log(userId)
@@ -11,13 +13,15 @@ export function getData(userID, guildID, playerInfo) {
 }
 
 export function getClassData(userId, guildID, playerInfo, classeslist) {
+	//console.log(`${guildID} ${userId} Classdata`)
 	if (!playerInfo[guildID + userId]) return
 	// if (message.user.bot !== false) return []
 	return classeslist[getData(userId, guildID, playerInfo).Class] || { Skill: [] }
 }
 
-export function getItemData(guildId, userId, playerInfo) {
+export function getItemData(message, guildId, userId, playerInfo) {
 	let result = ''
+	console.log(`${guildId} ${userId}`)
 	if (!playerInfo[guildId + userId]) return
 	if (Object.values(getData(userId, guildId, playerInfo).Items).length === 0) { var test2 = 'inventory is empty. Kupo.' } else {
 		console.log(playerInfo.PlayerName + ' has: ')

@@ -1,24 +1,5 @@
-import { leveling } from '../MyAPI/BotLevelSysteam/levelMinAndMax'
 
-const Discord = require('discord.js')
-const util = require('util')
-const fs = require('fs')
-const EventEmitter = require('events')
-
-const Permissions = Discord.Permissions
-const GuildMember = Discord.GuildMember
-const User = Discord.User
-const TextChanel = Discord.TextChannel
-
-const moogle = {}
-
-// module.exports.run = function () {
-//   console.log(`cookies`)
-// }
-
-// moogle.classeslist = JSON.parse(fs.readFileSync('../../Data/classeslist.json')) || {}
 export function run (contents, classlist, guild, classsave, Classes, ClassName) {
-//	try {
 	for (let i = 0; i < guild.length; i++) {
 		for (let j = 0; j < guild[i].members.array().length; j++) {
 			if (guild[i].members.array()[j].user.bot === false) {
@@ -39,8 +20,11 @@ export function run (contents, classlist, guild, classsave, Classes, ClassName) 
 					MDef:5,
 					Skill: ['scan'],
 					Sp: 0,
+					limit:[0, 100],
 					Skillinfo: {'scan': {'SkillName': 'scan'}},
-					ClassInfo: 'this is a noobClass'
+					ClassInfo: 'this is a noobClass',
+					UnlockReq: { ClassReq: { Class: { ClassName: 'none', ClassLvl: 0, }, ItemReq: { ItemName: 'none' }, PermReq:'none'}},
+					ClassUnlocked: true,
 				}
 				classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] = classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] || Classdata
 				if (Classes[Classdata.ClassName]) {
@@ -52,9 +36,4 @@ export function run (contents, classlist, guild, classsave, Classes, ClassName) 
 			}
 		}
 	}
-	//	} catch (err) { console.log(`ERROR: Class \`${guild[1].members.array()}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.`) }
-	// saveData(classsave)
-}
-function saveData (classsave) {
-	fs.writeFileSync('../../Data/classeslist.json', JSON.stringify(classsave))
 }

@@ -23,6 +23,8 @@ import { removeMonster } from './MyAPI/BattleBotSysteam/BattleSysteam/removeMons
 import { GetAverageMaxLevel, getRandomIntInclusive } from './MyAPI/Others/math.js'
 import { messagesManager } from './MyAPI/MessageSysteam/messagesManager.js'
 import { initPlayerPermission } from './MyAPI/PermissionSysteam/permmanager.js'
+import { roleManager } from './MyAPI/BotRoleSysteam/RoleManager.js'
+import { EventEmitter } from 'events';
 
 
 const Client = new _Client()
@@ -84,7 +86,7 @@ export let moogle = {
 	ItemInfo:{},
 	permissions: {},
 	getPlayerRoles: getPlayerRoles,
-
+	roleamount: {}
 
 }
 
@@ -125,7 +127,6 @@ Client.on('ready', () => {
 	
 	botlogs('Bot Started')
 	moogle.dir()
-
 	botlogs(Skillslists)
 	commandHelp(commandlist, Commands, CommandName)
 	initBotPlayers(Client, botInfo, defaltchannel, saveData)
@@ -141,6 +142,7 @@ Client.on('ready', () => {
 	botlogs(moogle.Enemyslist)
 	initPlayerPermission(Client, playerPermissionInfo, defaltchannel, saveData)
 	commandPermisson(commandlist, Client, playerPermissionInfo, saveData)
+	roleManager(Client)
 	
 })
 
@@ -192,7 +194,7 @@ Client.on('presenceUpdate', (oldMember, newMember) => {
 	}
 })
 Client.on('error', (error) => {
-	Client.user.dmChannel.messages(error)
+	console.log(error)
 	
 })
 Client.on('message', (message) => {
@@ -213,6 +215,8 @@ Client.on('message', (message) => {
 	 * ! Client.user.setStatus('online')
 	 */
 	// message.guilDate.me.setNickname(`[${contents.deployed}]${contents.version}`);
+
+	if (message.author.discriminator === '0000') return
 	const isServer = !!message.guild
 	let user = isServer ? message.member : message.author
 	let name = isServer ? user.displayName : user.username
@@ -248,7 +252,7 @@ Client.on('message', (message) => {
 	const contents = moogle.contents
 	const commandlist = moogle.commandlist
 	const pPI = moogle.playerPermissionInfo
-
+	
 	// moogle.eval(message)
 	if (message.channel.type !== 'dm') {
 		const userbot = user.user.bot
@@ -273,7 +277,7 @@ Client.on('message', (message) => {
 		const getD = getData(message.author.id, message.guild.id, moogle.playerInfo)
 		const getC = getClassData(message.author.id, message.guild.id, moogle.playerInfo, moogle.classeslist)
 		const guildId = message.guild.id
-		const getPi = getItemData(guildId, userId, moogle.playerInfo, moogle.playerInventory)
+		const getPi = getItemData(message, guildId, message.member.id, moogle.playerInfo, moogle.playerInventory)
 		const classInfo = moogle.classeslist
 		const playerInfo = moogle.playerInfo
 		const getS = getSkillListData(getC, guildId, playerId, playerInfo, Skilllist)
@@ -284,8 +288,8 @@ Client.on('message', (message) => {
 		commands(message, userId, Classes, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS, user, botlogs, bots, botInfo, defaltchannel, Commands, CommandName, Client, contents, commandlist, pPI)
 		if (message.author.bot === false) {
 			if (user.user.bot === false) {
-				ProcessLeveling(userId, message, playerInfo, moogle.classeslist)
-				checkForLevelChange(userId, message, moogle.playerInfo, Classes, classInfo, moogle.classeslist)
+				ProcessLeveling(message.member.id, message, playerInfo, moogle.classeslist)
+				checkForLevelChange(message.member.id, message, moogle.playerInfo, Classes, classInfo, moogle.classeslist)
 			}
 		}
 	} else {
@@ -312,7 +316,7 @@ Client.on('message', (message) => {
 					const getC = moogle.classeslist[moogle.playerInfo[server.id + userId].Class]
 					const guildId = server.id
 					const Classes = moogle.Classes
-					const getPi = getItemData(guildId, userId, moogle.playerInfo, playerInventory)
+					const getPi = getItemData(message, guildId, message.author.id, moogle.playerInfo, playerInventory)
 					const getS = getSkillListData(getC, guildId, userId, moogle.playerInfo, Skilllist)
 
 					commands(message, userId, Classes, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS, user, botlogs, bots, botInfo, defaltchannel, Commands, CommandName, Client, contents, commandlist, pPI)
@@ -595,44 +599,43 @@ moogle.autoSave = function () {
 Client.setInterval(moogle.autoSave, 600000)
 
 GuildMember.prototype.killPerson = function (user, message) {
-	moogle.botlogs(getClassData(user.id, message).PlayerName)
-	getClassData(user.id, message)
-	getData(user.id, message)
+	if (message.member.bot === true) return
+	moogle.botlogs(getData(user.id, message.guild.id, moogle.playerInfo).PlayerName)
+	getClassData(user.id, message.guild.id, moogle.playerInfo, moogle.classeslist)
+	getData(user.id, message.guild.id, moogle.playerInfo)
 	if (this.bannable) {
-		if (getData(user.id, message).isRenamable === true) {
-			if (getData(user.id, message).lvllcoation === 'Left') {
-				message.member.setNickname('[Dead] ' + getData(user.id, message).PlayerName)
+		if (getData(user.id, message.guild.id, moogle.playerInfo).isRenamable === true) {
+			if (getData(user.id, message.guild.id, moogle.playerInfo).lvllcoation === 'Left') {
+				message.member.setNickname('[Dead] ' + getData(user.id, message.guild.id, moogle.playerInfo).PlayerName)
 			} else {
-				message.member.setNickname(getData(user.id, message).PlayerName + ' [Dead]')
+				message.member.setNickname(getData(user.id, message.guild.id, moogle.playerInfo).PlayerName + ' [Dead]')
 			}
 		}
 	}
-	getClassData(user.id, message).message[0] = 0
-	getClassData(user.id, message).Hp[0] = 0
-	getData(user.id, message).isDead = true
+	getClassData(user.id, message.guild.id, moogle.playerInfo, moogle.classeslist).message[0] = 0
+	getClassData(user.id, message.guild.id, moogle.playerInfo, moogle.classeslist).Hp[0] = 0
+	getData(user.id, message.guild.id, moogle.playerInfo).isDead = true
 }
 
 GuildMember.prototype.revivePerson = function (user, message) {
-	getClassData(user.id, message)
-	getData(user.id, message)
+	getClassData(user.id, message.guild.id, moogle.playerInfo, moogle.classeslist)
+	getData(user.id, message.guild.id, moogle.playerInfo)
 	if (!this.isDead()) return
-	const level = getClassData(user.id, message).level
-	getData(user.id, message).isDead = false
-	getClassData(user.id, message).message[0] = 0
+	const level = getClassData(user.id, message.guild.id, moogle.playerInfo, moogle.classeslist).level
+	getData(user.id, message.guild.id, moogle.playerInfo).isDead = false
+	getClassData(user.id, message.guild.id, moogle.playerInfo, moogle.classeslist).message[0] = 0
 
-	getClassData(user.id, message).Hp[0] = getClassData(user.id, message).Hp[1]
+	getClassData(user.id, message.guild.id, moogle.playerInfo, moogle.classeslist).Hp[0] = getClassData(user.id, message.guild.id, moogle.playerInfo, moogle.classeslist).Hp[1]
 	if (this.bannable) {
 		let lvl = `Lvl ${level} `
-		if (getData(user.id, message).isDead) {
+		if (getData(user.id, message.guild.id, moogle.playerInfo).isDead) {
 			lvl = '[Dead] '
 		}
-		moogle.SetNickname(lvl + getData(user.id, message).PlayerName)
+		moogle.SetNickname(lvl + getData(user.id, message.guild.id, moogle.playerInfo).PlayerName)
 	}
 }
 
 GuildMember.prototype.isDead = function (user, message) {
-	getClassData(user.id, message)
-	getData(user.id, message)
 	return !!moogle.PlayerInfo[message.guild.id + user.id].isDead
 }
 
@@ -648,3 +651,47 @@ GuildMember.prototype.removeAllLevelRoles = function () {
 	}
 	return this.removeRoles(allLevelRoles)
 }
+moogle.roleManagment = function () {
+	moogle.roleamount = { names: '',member: [], amount: 0 }
+	Client.guilds.forEach(guild => {
+
+		let guildid = guild.id
+		let guildNmae = guild.name
+		console.log(`Guild  ${guildNmae} ${guildid}`)
+
+		Client.guilds.find('id', guildid).roles.forEach(role => {
+
+			let roleid = role.id
+			let roleName = role.name
+			moogle.roleamount[roleid] = moogle.roleamount[roleid] | moogle.roleamount
+			moogle.roleamount[roleid].names = roleName
+			Client.guilds.find('id', guildid).roles.find('id', roleid).members.forEach(member => {
+
+				let memberid = member.id
+				let membername = member.user.username
+				//console.log(`members  ${membername} ${memberid}`)
+				
+
+				
+			})
+			// moogle.roleamount[roleid].amount = moogle.roleamount[roleid].member.length
+			console.log(`role  ${roleName} ${roleid} users ${moogle.roleamount[roleid].amount}`)
+
+		})
+	// 	Client.guilds.find('id', guildid).members.forEach(member => {
+
+	// 		let memberid = member.id
+	// 		console.log('member ' + memberid)
+
+	// 		Client.guilds.find('id', guildid).members.find('id', memberid).roles.forEach(role => {
+	// 			let roleid = role.id
+	// 			console.log('role ' + roleid)
+
+	// 		})
+
+	// 	})
+	})
+	return moogle.roleamount
+}
+
+

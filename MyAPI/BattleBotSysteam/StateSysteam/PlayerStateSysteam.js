@@ -7,8 +7,8 @@ export function CheckPlayerDeath(Client, message, enemy, server, user, getC, get
 
 	if (getC.Hp[0] <= 0) {
 		getC.Hp[0] = 0
-		botlogs('Testing stuff.' + message.member)
-		message.member.killPerson(message.member.user, message)
+		botlogs('Testing stuff.' + message.member.id)
+		message.member.killPerson(message.member, message)
 		privetResult = `\`\`\`You were killed by the ${enemy.MonsterName} in ${server.name}\`\`\``
 		userResult = `\`\`\`${message.member.user.username} was killed by the ${enemy.MonsterName} ! May their soul rest in peace.\`\`\``
 	}

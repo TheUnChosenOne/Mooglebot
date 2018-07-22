@@ -1,12 +1,4 @@
 
-
-const fs = require('fs')
-
-// module.exports.run = function () {
-//   console.log(`cookies`)
-// }
-
-// moogle.classeslist = JSON.parse(fs.readFileSync('../Data/classeslist.json')) || {}
 export function run (contents, classlist, guild, classsave, Classes) {
 	try {
 		for (let i = 0; i < guild.length; i++) {
@@ -26,11 +18,14 @@ export function run (contents, classlist, guild, classsave, Classes) {
 						Ap: [999, 999],
 						Atk: 9999,
 						Def: 9999,
-						MDef: 5,
+						MDef: 9999,
 						Skill: [],
 						Skillinfo: {},
 						Sp: 0,
-						ClassInfo: 'I am a Moogle. Kupo!'
+						limit: [0, 100],
+						ClassInfo: 'I am a Moogle. Kupo!',
+						UnlockReq: { ClassReq: { Class: { ClassName: 'none', ClassLvl: 0, }, ItemReq: { ItemName: 'none' }, PermReq: 'admin' } },
+						ClassUnlocked: false,
 					}
 					classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] = classsave[guild[i].id + guild[i].members.array()[j].user.id + Classdata.ClassName] || Classdata
 					//leveling(Classdata.lvl, Classdata.Exp, Classdata.expNeeded, Classdata.minLevel, Classdata.maxLevel, Classes[Classdata.ClassName].levelSys)
@@ -39,8 +34,5 @@ export function run (contents, classlist, guild, classsave, Classes) {
 			}
 		}
 	} catch (err) { console.log(`ERROR: Class \`${guild[1].members.array()}\` has encountered an error. Please contact Jackmaster9000 or your Server Admin to (hopefully) correct this issue.`) }
-	//saveData(classsave)
 }
-function saveData (classsave) {
-	fs.writeFileSync('../Data/classeslist.json', JSON.stringify(classsave))
-}
+

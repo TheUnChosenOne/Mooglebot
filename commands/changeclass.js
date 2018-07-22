@@ -1,4 +1,5 @@
 import { moogle, saveData } from '../Main'
+import { roleAdder } from '../MyAPI/BotRoleSysteam/RoleManager';
 
 
 export function run(message, userId, Classes, getD, getC, getI, getPi, playerInventory, getCd, getCl, Skillablity, SkillName, Skilllist, getS, getSI, ShopItems, getIS, user, botlogs, bots, botInfo, defaltchannel, Commands, CommandName, Client, contents, commandlist, pPI) {
@@ -16,20 +17,32 @@ export function run(message, userId, Classes, getD, getC, getI, getPi, playerInv
 	else
 		return message.channel.send('You must add a Class Name >chaneclass [Class_Name]')
 
-	let re = /(\b[a-z](?!\s))/g;
+	let re = /(\b[a-z](?!\s))/g
 	let regex = ClassName
-	regex = regex.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); })
+	regex = regex.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase() })
 
 	if (getD.ServerId + getD.PlayerId + regex === getD.Class) {
 		message.author.send(`You are still ${regex}`)
+		return
 	}
 	else if (moogle.classeslist[getD.ServerId + getD.PlayerId + regex] === undefined) {
 		message.author.send(`${regex} is not a Class`)
 		console.log(`${getD.ServerId + getD.PlayerId + regex} is not a Class`)
+		return
 	}
 	else {
+		let member = message.guild.member(userId)
 		message.author.send(`Your class has been Change to ${regex}`)
 		getD.Class = getD.ServerId + getD.PlayerId + regex
+
+		for (let j = 0; j < Object.values(moogle.Classes).length; j++) {
+			let notMyRole = Object.values(moogle.Classes)[j].ClassName	
+			// delete Object.values(moogle.Classes)[`Class:${moogle.classeslist[moogle.playerInfo[message.guild.id + userId].Class].ClassName}`]
+			let role = message.guild.roles.find('name', `Class:${notMyRole}`) 
+			member.removeRole(role)
+			console.log(member.removeRole.name)
+		}
+		roleAdder(Client, message.guild.id, userId, `Class:${moogle.classeslist[moogle.playerInfo[message.guild.id + userId].Class].ClassName}`, 'Class change')
 		saveData()
 	}
 }
