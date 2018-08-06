@@ -1,7 +1,7 @@
 
 
 
-export function server(Client, guild, bots, botInfo, ShopItems, playerInfo, classeslist) {
+export function server(Client, guild, bots, botInfo, ShopItems, playerInfo, classeslist, player) {
 	const servers = Client.guilds.array()
 	console.log(bots)
 	for (let i = 0; i < servers.length; i++) {
@@ -15,19 +15,20 @@ export function server(Client, guild, bots, botInfo, ShopItems, playerInfo, clas
 			botInfo[server.id + server.me.id].BotisUseable = true
 			bots[server.id].id.push(botInfo[server.id + server.me.id].BotId)
 		}
-	
+		
 		bot(server, botInfo)
-		playerName(server, playerInfo, classeslist)
+		playerName(server, playerInfo, classeslist, player)
 	}
 }
 
-export function playerName (server, playerInfo, classeslist) {
+export function playerName (server, playerInfo, classeslist, player) {
 	const members = server.members.array()
 	for (let i = 0; i < members.length; i++) {
 		const mem = members[i]
 
 		if (mem && mem.bannable) {
 			if (!playerInfo[server.id + mem.user.id]) continue
+			player[server.id].id.push(mem.user.id)
 			const level = classeslist[playerInfo[server.id + mem.user.id].Class].Level
 			let lvl = `Lvl ${level} `
 			if (playerInfo[server.id + mem.user.id].isDead !== false) {

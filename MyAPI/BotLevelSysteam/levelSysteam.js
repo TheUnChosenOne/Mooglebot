@@ -2,7 +2,7 @@
 import { onLevelChange } from './levelUpSystem'
 import { getData, getClassData } from '../DataSysteam/getDataInfo'
 
-export function checkForLevelChange(userId, message, playerInfo, Classes, classInfo, classeslist) {
+export function checkForLevelChange(Client, userId, message, playerInfo, Classes, classInfo, classeslist) {
 	getData(userId, message, playerInfo)
 	var exp = getClassData(userId, message.guild.id, playerInfo, classeslist).Exp
 	// const exp = PlayerInfo[message.guild.id + userId].Exp
@@ -19,7 +19,7 @@ export function checkForLevelChange(userId, message, playerInfo, Classes, classI
 		}
 		if (getClassData(userId, message.guild.id, playerInfo, classeslist).Level !== setLevel) {
 			getClassData(userId, message.guild.id, playerInfo, classeslist).Level = setLevel
-			onLevelChange(userId, message, classInfo, playerInfo)
+			onLevelChange(Client, userId, message, classInfo, playerInfo)
 			if (message.member.bannable) {
 				const level = classInfo[playerInfo[message.guild.id + userId].Class].Level
 				let lvl = `Lvl ${level} `

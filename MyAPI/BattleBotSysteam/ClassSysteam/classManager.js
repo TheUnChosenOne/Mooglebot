@@ -1,7 +1,7 @@
 
 
 
-export function Classes(Client, Classes, ClassName, classeslist, classlist, contents) {
+export function Classes(Client, Classes, playerInfo, ClassName, classeslist, classlist, contents) {
 	// const Classes = Classes
 	// const ClassName = ClassName
 	var guild = Client.guilds.array()
@@ -10,7 +10,7 @@ export function Classes(Client, Classes, ClassName, classeslist, classlist, cont
 		// try {
 		const classsave = classeslist
 		const Class = require('../../../Classes/' + classlist[j] + '')
-		Class.run(contents, classlist, guild, classsave, Classes, ClassName)
+		Class.run(contents, classlist, guild, classsave, Classes, playerInfo, ClassName)
 		console.log(`${j}: ${classlist[j]}`)
 		// }
 		// catch (err) {

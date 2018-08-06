@@ -7,7 +7,9 @@ export function run(Items, ShopItems, ItemShop, Itemlist) {
 			ItemId: 1,
 			Amount: [0, 100],
 			Gold: 50,
-			Effect: function (getC, getD, message) {
+			Rarty: 5,
+			isKeyItem: false,
+			Effect: function (getC, getD, message, playerInventory) {
 				if (getD.isDead === false) {
 					message.channel.send('You are not Dead. Kupo.')
 				}

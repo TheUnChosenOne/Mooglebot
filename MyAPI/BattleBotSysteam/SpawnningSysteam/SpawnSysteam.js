@@ -2,6 +2,7 @@
 import { getRandomIntInclusive } from '../../Others/math'
 import { messagesManager } from '../../MessageSysteam/messagesManager'
 import { RichEmbed } from 'discord.js'
+import { moogle, details } from '../../../Main';
 
 
 export function summonMonster(Client, server, selbot, name, lvl, monsters, bots, botInfo, GetAverageMaxLevel, monsterInfo, playerInfo, classeslist) {
@@ -63,11 +64,11 @@ export function summonMonster(Client, server, selbot, name, lvl, monsters, bots,
 
 	embed.setThumbnail(server.members.get(botid).avatarURL)
 	embed.setTitle(`${botInfo[server.id + botid].BotName}`)
-	embed.setDescription(`\`\`\`JS\nLvl ${server.members.get(botid).__currentBattleEnemyLv} ${monsterInfo[monster].MonsterName} has appeared!\nUse the >Fight [Power#] [@bot] to fight the enemy and potentially gain a reward!\nUse >Help to see more commands\`\`\``)
+	embed.setDescription(`\`\`\`JS\nLvl ${server.members.get(botid).__currentBattleEnemyLv} ${monsterInfo[monster].MonsterName} has appeared!\nUse the >Fight [@bot] to fight the enemy and potentially gain a reward!\nUse >Help to see more commands\`\`\``)
 
 	server.members.get(botid).setNickname(`Lvl ${server.members.get(botid).__currentBattleEnemyLv} ${monsterInfo[monster].MonsterName} [${server.members.get(botid).__currentBattleEnemyHp} HP]`)
-
-	messagesManager(Client, null, '', embed, server, false, true)
+	details(moogle.botInfo[server.id + botid].BattleMode, server, moogle.botInfo[server.id + botid])
+	messagesManager(Client, null, null, '', embed, server, false, true)
 }
 
 export function checkforMessageMonsters(message, ServerInfo) {

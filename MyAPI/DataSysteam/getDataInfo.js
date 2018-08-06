@@ -12,11 +12,11 @@ export function getData(userID, guildID, playerInfo) {
 	return playerInfo[guildID + userID] || { Items: {} }
 }
 
-export function getClassData(userId, guildID, playerInfo, classeslist) {
+export function getClassData(userID, guildID, playerInfo, classeslist) {
 	//console.log(`${guildID} ${userId} Classdata`)
-	if (!playerInfo[guildID + userId]) return
+	if (!playerInfo[guildID + userID]) return
 	// if (message.user.bot !== false) return []
-	return classeslist[getData(userId, guildID, playerInfo).Class] || { Skill: [] }
+	return classeslist[getData(userID, guildID, playerInfo).Class] || { Skill: [] }
 }
 
 export function getItemData(message, guildId, userId, playerInfo) {

@@ -9,18 +9,15 @@ export function run(message, userId, Classes, getD, getC, getI, getPi, playerInv
 	}
 	if (pPI[getD.PermissonId.GuildID + getD.PermissonId.RoleID].Command.defaltchannel.UseableCommands == false & Client.guilds.find('id', getD.PermissonId.GuildID).ownerID !== getD.PlayerId == true)
 		return message.author.send(`${getD.PlayerName} you do not have permisson to use this command. Kupo.`)
-
-	if (message.content.match(/(\S*) (\d*)/i) && (String(message.content.match(/(\S*) (\d*)/i)[1])) === '')
-		var regex = String(message.content.match(/(\S*) (\d*)/i)[2])
-	else if (message.content.match(/(\S*) (\d*)/i) && regex !== null)
-		regex = message.content.match(/(\S*) (\d*)/i)[2] || message.channel.id
-
-	if (!message.guild.channels.find('id', regex)) return messagesManager(Client, message, null, 'You must use a Channel Id >defaltchannel [ChannelId]', message.guild, false, true)
-	console.log(message.channel.id)
-	const defaltchannellist = {
-		message: message.channel.id || regex
+	let regex = message.channel.id
+	if (!moogle.defaltchannel[message.guild.id]) {
+		const defaltchannellist = {
+			message:  regex
+		}
+		moogle.defaltchannel[message.guild.id] = moogle.defaltchannel[message.guild.id] || defaltchannellist
 	}
-	moogle.defaltchannel[message.guild.id] = moogle.defaltchannel[message.guild.id] || defaltchannellist
+	console.log(message.channel.id)
+	moogle.defaltchannel[message.guild.id].message = regex
 	message.channel.send(`you have set your defalt channel to ${message.channel.id || regex}`)
 	saveData( )
 }
@@ -48,4 +45,4 @@ module.exports.permission = function (Client, playerPermissionInfo, saveData) {
 	}
 }
 
-export function getCommand() { return [['defaltchannel', 'defaltc', 'dc'], /(.*)/] }
+export function getCommand() { return [['setdefaltchannel', 'setdefaltc', 'sdc'], /(.*)/] }

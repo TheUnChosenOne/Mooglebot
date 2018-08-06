@@ -5,7 +5,7 @@ import { commands, commandHelp, commandPermisson } from './MyAPI/CommandSysteam/
 import { existsSync, writeFileSync, mkdirSync, readFileSync, readdirSync, writeFile} from 'fs'
 import { msConversion } from './MyAPI/TimeSysteam/TimeManager.js'
 import { initBotPlayers, botlist } from './MyAPI/DataSysteam/botDataManager.js'
-import { initPlayers } from './MyAPI/DataSysteam/playerDataManager.js'
+import { initPlayers, playerlist } from './MyAPI/DataSysteam/playerDataManager.js'
 import { checkForLevelChange } from './MyAPI/BotLevelSysteam/levelSysteam.js'
 import { ProcessLeveling, clean } from './MyAPI/BotLevelSysteam/levelProcessing.js'
 import { getData, getClassData, getItemData, getSkillListData, getCommandData, getClassListData, getShopItemData, getPlayerRoles } from './MyAPI/DataSysteam/getDataInfo'
@@ -13,7 +13,6 @@ import { server } from './MyAPI/Others/nameMnager.js'
 import { Classes } from './MyAPI/BattleBotSysteam/ClassSysteam/classManager.js'
 import { leveling } from './MyAPI/BotLevelSysteam/levelMinAndMax.js'
 import { monsters } from './MyAPI/BattleBotSysteam/EnemySysteam/enemyManager.js'
-import { newBot, newPlayer } from './MyAPI/Others/joiningsysteam.js'
 import { botstatus, playerstatus } from './MyAPI/Others/playerdisccordstatus.js'
 import { items } from './MyAPI/InvintorySysteam/itemManager.js'
 import { skills } from './MyAPI/AbilityBotSysteam/abilttyManager.js'
@@ -24,7 +23,8 @@ import { GetAverageMaxLevel, getRandomIntInclusive } from './MyAPI/Others/math.j
 import { messagesManager } from './MyAPI/MessageSysteam/messagesManager.js'
 import { initPlayerPermission } from './MyAPI/PermissionSysteam/permmanager.js'
 import { roleManager } from './MyAPI/BotRoleSysteam/RoleManager.js'
-import { EventEmitter } from 'events';
+import { enemyAttacks } from './MyAPI/BattleBotSysteam/BattleSysteam/BattleManager.js'
+
 
 
 const Client = new _Client()
@@ -62,6 +62,7 @@ export let moogle = {
 	playerInfo: playerInfoCheck() || {},
 	playerInventory: playerInventoryCheck() || {},
 	playerPermissionInfo: playerPermissionInfoCheck() || {},
+	playerlist: {},
 	PreviousAuthor: '',
 	PreviousMessage: '',
 	ShopItems: [],
@@ -74,6 +75,7 @@ export let moogle = {
 	levelSys: {},
 	GetAverageMaxLevel: GetAverageMaxLevel,
 	selbot: null,
+	selplayer: null,
 	lvl: null,
 	name: null,
 	getRandomIntInclusive: getRandomIntInclusive,
@@ -86,8 +88,9 @@ export let moogle = {
 	ItemInfo:{},
 	permissions: {},
 	getPlayerRoles: getPlayerRoles,
-	roleamount: {}
-
+	roleamount: {},
+	mode: 'standby',
+	Status: '',
 }
 
 Client.on('ready', () => {
@@ -107,6 +110,7 @@ Client.on('ready', () => {
 	let contents = moogle.contents
 	let guild = moogle.guild
 	let bots = moogle.bots
+	let player = moogle.playerlist
 	let ShopItems = moogle.ShopItems
 	let Classess = moogle.Classes
 	let Enemyslist = moogle.Enemyslist
@@ -124,7 +128,7 @@ Client.on('ready', () => {
 	const Commands = moogle.Commands
 	const CommandName = moogle.CommandName
 	const commandlist = moogle.commandlist
-	
+	details(false)
 	botlogs('Bot Started')
 	moogle.dir()
 	botlogs(Skillslists)
@@ -133,9 +137,10 @@ Client.on('ready', () => {
 	initPlayers(Client, playerInfo, defaltchannel, saveData)
 	items(Items, ShopItems, ItemShop, itemslists, ItemInfo, botlogs)
 	skills(Client, Skillablity, SkillName, Skilllist, Skillslists, botlogs)
-	Classes(Client, Classess, ClassName, classeslist, classlist, contents)
+	Classes(Client, Classess, playerInfo, ClassName, classeslist, classlist, contents)
 	botlist(Client, bots)
-	server(Client, guild, bots, botInfo, ShopItems, playerInfo, classeslist)
+	playerlist(Client, player)
+	server(Client, guild, bots, botInfo, ShopItems, playerInfo, classeslist, player)
 	monsters(monsterss, Enemyslist, Enemys)
 	moogle.dir()
 	lvlSys()
@@ -148,6 +153,7 @@ Client.on('ready', () => {
 
 Client.on('guildMemberAdd', (member) => {
 
+	let botlogs = moogle.botlogs
 	let botInfo = moogle.botInfo
 	let defaltchannel = moogle.defaltchannel
 	let playerInfo = moogle.playerInfo
@@ -155,10 +161,209 @@ Client.on('guildMemberAdd', (member) => {
 	let classeslist = moogle.classeslist
 	let classlist = moogle.classlist
 	let contents = moogle.contents
+	let guild = moogle.guild
+	let bots = moogle.bots
+	let player = moogle.playerlist
+	let ShopItems = moogle.ShopItems
 	let Classess = moogle.Classes
+	let Enemyslist = moogle.Enemyslist
+	let Enemys = moogle.Enemys
+	let monsterss = moogle.Monsters
+	let Items = moogle.Items
+	let ItemShop = moogle.ItemShop
+	let itemslists = moogle.Itemslists
+	let Skillablity = moogle.Skillablity
+	let SkillName = moogle.SkillName
+	let Skilllist = moogle.Skilllist
+	let Skillslists = moogle.Skillslists
+	let ItemInfo = moogle.ItemInfo
+	let playerPermissionInfo = moogle.playerPermissionInfo
+	const Commands = moogle.Commands
+	const CommandName = moogle.CommandName
+	const commandlist = moogle.commandlist
 
-	newPlayer(Client, member, botInfo, defaltchannel, saveData, playerInfo, Classess, ClassName, classeslist, classlist, contents)
-	newBot(Client, member, botInfo, defaltchannel, saveData)
+	moogle.playerlist[member.guild.id].id = []
+	moogle.bots[member.guild.id].id = []
+
+	botlogs(`New Player ${member.user.username}`)
+	moogle.dir()
+	botlogs(Skillslists)
+	commandHelp(commandlist, Commands, CommandName)
+	initBotPlayers(Client, botInfo, defaltchannel, saveData)
+	initPlayers(Client, playerInfo, defaltchannel, saveData)
+	items(Items, ShopItems, ItemShop, itemslists, ItemInfo, botlogs)
+	skills(Client, Skillablity, SkillName, Skilllist, Skillslists, botlogs)
+	Classes(Client, Classess, playerInfo, ClassName, classeslist, classlist, contents)
+	botlist(Client, bots)
+	playerlist(Client, player)
+	server(Client, guild, bots, botInfo, ShopItems, playerInfo, classeslist, player)
+	monsters(monsterss, Enemyslist, Enemys)
+	moogle.dir()
+	lvlSys()
+	botlogs(moogle.Enemyslist)
+	initPlayerPermission(Client, playerPermissionInfo, defaltchannel, saveData)
+	commandPermisson(commandlist, Client, playerPermissionInfo, saveData)
+	roleManager(Client)
+})
+
+Client.on('guildCreate', (guild) => {
+
+	let botlogs = moogle.botlogs
+	let botInfo = moogle.botInfo
+	let defaltchannel = moogle.defaltchannel
+	let playerInfo = moogle.playerInfo
+	let ClassName = moogle.ClassName
+	let classeslist = moogle.classeslist
+	let classlist = moogle.classlist
+	let contents = moogle.contents
+	let guilds = moogle.guild
+	let bots = moogle.bots
+	let player = moogle.playerlist
+	let ShopItems = moogle.ShopItems
+	let Classess = moogle.Classes
+	let Enemyslist = moogle.Enemyslist
+	let Enemys = moogle.Enemys
+	let monsterss = moogle.Monsters
+	let Items = moogle.Items
+	let ItemShop = moogle.ItemShop
+	let itemslists = moogle.Itemslists
+	let Skillablity = moogle.Skillablity
+	let SkillName = moogle.SkillName
+	let Skilllist = moogle.Skilllist
+	let Skillslists = moogle.Skillslists
+	let ItemInfo = moogle.ItemInfo
+	let playerPermissionInfo = moogle.playerPermissionInfo
+	const Commands = moogle.Commands
+	const CommandName = moogle.CommandName
+	const commandlist = moogle.commandlist
+
+	guild.owner.sendMessage('Use Command >setdefaltchannel in the channel you wish to set Defalt Channel for messageing.\nThe Bot will not beable to send battle reports to the Guild.')
+	botlogs(`Bot joined ${guild.name}`)
+
+	moogle.dir()
+	botlogs(Skillslists)
+	commandHelp(commandlist, Commands, CommandName)
+	initBotPlayers(Client, botInfo, defaltchannel, saveData)
+	initPlayers(Client, playerInfo, defaltchannel, saveData)
+	items(Items, ShopItems, ItemShop, itemslists, ItemInfo, botlogs)
+	skills(Client, Skillablity, SkillName, Skilllist, Skillslists, botlogs)
+	Classes(Client, Classess, playerInfo, ClassName, classeslist, classlist, contents)
+	botlist(Client, bots)
+	playerlist(Client, player)
+	server(Client, guilds, bots, botInfo, ShopItems, playerInfo, classeslist, player)
+	monsters(monsterss, Enemyslist, Enemys)
+	moogle.dir()
+	lvlSys()
+	botlogs(moogle.Enemyslist)
+	initPlayerPermission(Client, playerPermissionInfo, defaltchannel, saveData)
+	commandPermisson(commandlist, Client, playerPermissionInfo, saveData)
+	roleManager(Client)
+})
+
+Client.on('guildDelete', (guild) => {
+
+	let botlogs = moogle.botlogs
+	let botInfo = moogle.botInfo
+	let defaltchannel = moogle.defaltchannel
+	let playerInfo = moogle.playerInfo
+	let ClassName = moogle.ClassName
+	let classeslist = moogle.classeslist
+	let classlist = moogle.classlist
+	let contents = moogle.contents
+	let guilds = moogle.guild
+	let bots = moogle.bots
+	let player = moogle.playerlist
+	let ShopItems = moogle.ShopItems
+	let Classess = moogle.Classes
+	let Enemyslist = moogle.Enemyslist
+	let Enemys = moogle.Enemys
+	let monsterss = moogle.Monsters
+	let Items = moogle.Items
+	let ItemShop = moogle.ItemShop
+	let itemslists = moogle.Itemslists
+	let Skillablity = moogle.Skillablity
+	let SkillName = moogle.SkillName
+	let Skilllist = moogle.Skilllist
+	let Skillslists = moogle.Skillslists
+	let ItemInfo = moogle.ItemInfo
+	let playerPermissionInfo = moogle.playerPermissionInfo
+	const Commands = moogle.Commands
+	const CommandName = moogle.CommandName
+	const commandlist = moogle.commandlist
+
+	botlogs(`Bot left ${guild.name}`)
+	moogle.dir()
+	botlogs(Skillslists)
+	commandHelp(commandlist, Commands, CommandName)
+	initBotPlayers(Client, botInfo, defaltchannel, saveData)
+	initPlayers(Client, playerInfo, defaltchannel, saveData)
+	items(Items, ShopItems, ItemShop, itemslists, ItemInfo, botlogs)
+	skills(Client, Skillablity, SkillName, Skilllist, Skillslists, botlogs)
+	Classes(Client, Classess, playerInfo, ClassName, classeslist, classlist, contents)
+	botlist(Client, bots)
+	playerlist(Client, player)
+	server(Client, guilds, bots, botInfo, ShopItems, playerInfo, classeslist, player)
+	monsters(monsterss, Enemyslist, Enemys)
+	moogle.dir()
+	lvlSys()
+	botlogs(moogle.Enemyslist)
+	initPlayerPermission(Client, playerPermissionInfo, defaltchannel, saveData)
+	commandPermisson(commandlist, Client, playerPermissionInfo, saveData)
+	roleManager(Client)
+})
+Client.on('guildMemberRemove', (member) => {
+
+	let botlogs = moogle.botlogs
+	let botInfo = moogle.botInfo
+	let defaltchannel = moogle.defaltchannel
+	let playerInfo = moogle.playerInfo
+	let ClassName = moogle.ClassName
+	let classeslist = moogle.classeslist
+	let classlist = moogle.classlist
+	let contents = moogle.contents
+	let guild = moogle.guild
+	let bots = moogle.bots
+	let player = moogle.playerlist
+	let ShopItems = moogle.ShopItems
+	let Classess = moogle.Classes
+	let Enemyslist = moogle.Enemyslist
+	let Enemys = moogle.Enemys
+	let monsterss = moogle.Monsters
+	let Items = moogle.Items
+	let ItemShop = moogle.ItemShop
+	let itemslists = moogle.Itemslists
+	let Skillablity = moogle.Skillablity
+	let SkillName = moogle.SkillName
+	let Skilllist = moogle.Skilllist
+	let Skillslists = moogle.Skillslists
+	let ItemInfo = moogle.ItemInfo
+	let playerPermissionInfo = moogle.playerPermissionInfo
+	const Commands = moogle.Commands
+	const CommandName = moogle.CommandName
+	const commandlist = moogle.commandlist
+
+	moogle.playerlist[member.guild.id].id = []
+	moogle.bots[member.guild.id].id = []
+
+	botlogs(`Player Left ${member.user.username}`)
+	moogle.dir()
+	botlogs(Skillslists)
+	commandHelp(commandlist, Commands, CommandName)
+	initBotPlayers(Client, botInfo, defaltchannel, saveData)
+	initPlayers(Client, playerInfo, defaltchannel, saveData)
+	items(Items, ShopItems, ItemShop, itemslists, ItemInfo, botlogs)
+	skills(Client, Skillablity, SkillName, Skilllist, Skillslists, botlogs)
+	Classes(Client, Classess, playerInfo, ClassName, classeslist, classlist, contents)
+	botlist(Client, bots)
+	playerlist(Client, player)
+	server(Client, guild, bots, botInfo, ShopItems, playerInfo, classeslist, player)
+	monsters(monsterss, Enemyslist, Enemys)
+	moogle.dir()
+	lvlSys()
+	botlogs(moogle.Enemyslist)
+	initPlayerPermission(Client, playerPermissionInfo, defaltchannel, saveData)
+	commandPermisson(commandlist, Client, playerPermissionInfo, saveData)
+	roleManager(Client)
 })
 
 Client.on('presenceUpdate', (oldMember, newMember) => {
@@ -289,7 +494,7 @@ Client.on('message', (message) => {
 		if (message.author.bot === false) {
 			if (user.user.bot === false) {
 				ProcessLeveling(message.member.id, message, playerInfo, moogle.classeslist)
-				checkForLevelChange(message.member.id, message, moogle.playerInfo, Classes, classInfo, moogle.classeslist)
+				checkForLevelChange(Client, message.member.id, message, moogle.playerInfo, Classes, classInfo, moogle.classeslist)
 			}
 		}
 	} else {
@@ -523,18 +728,28 @@ function getTimeRemaining(endtime) {
 		'seconds': seconds
 	}
 }
+export function details(battlemode, server, Enemy) {
+	moogle.Status = ''
+	if (battlemode == true) {
+		moogle.Status = `Server:${server.name}\nEnemy:${Enemy.MonsterName} Lvl:${Enemy.__currentBattleEnemyLv} Hp:${Enemy.__currentBattleEnemyHp}`
+	} else {
+		moogle.Status = 'Waiting for the next battle.'
+	}
+	return moogle.Status
+} 
 
 clientdrp.updatePresence({
-	state: 'slithering',
-	details: '🐍',
+	state: `Mode: ${moogle.mode}`,
+	details: moogle.Status | ';)',
 	startTimestamp: Date.now(),
 	endTimestamp: Date.now() + 1337,
 	largeImageKey: 'mooglebig',
 	smallImageKey: 'mooglebot',
-	instance: true,
+	instance: true, 
 })
 
 moogle.eval = function (message) {
+	
 	if (message.content.match(/<eval (.*)/i)) {
 		if (message.author.id === '184650850688434176') {
 			let showHidden = true
@@ -580,6 +795,7 @@ moogle.autoSave = function () {
 	moogle.botlogs('Saving Data ' + moogle.GetDate())
 	saveData()
 	moogle.botlogs('Done Saving ' + moogle.GetDate())
+
 	const servers = Client.guilds.array()
 	for (let i = 0; i < servers.length; i++) {
 		var server = servers[i]
@@ -589,13 +805,41 @@ moogle.autoSave = function () {
 			if (moogle.botInfo[server.id + member].BattleMode === false && getRandomIntInclusive(0, 100) > 50) {
 				moogle.botlogs(`Monster spawned in ${server.name}`)
 				summonMonster(Client, server, moogle.selbot, moogle.name, moogle.lvl, moogle.Monsters, moogle.bots, moogle.botInfo, moogle.GetAverageMaxLevel, moogle.Enemyslist, moogle.playerInfo, moogle.classeslist)
-			} else if (moogle.botInfo[server.id + member].BattleMode === true && getRandomIntInclusive(0, 100) < 50) {
+				moogle.mode = 'Battle'
+				
+			}else if (moogle.botInfo[server.id + member].BattleMode === true && getRandomIntInclusive(0, 100) >= 25){
 				removeMonster(Client, server, moogle.winner, moogle.selbot, moogle.didEscape, moogle.contents, moogle.botlogs, moogle.bots, moogle.botInfo, moogle.botid, moogle.defaltchannel)
+				moogle.mode = 'Standby'
 			}
 		}
 	}
 }
 
+moogle.botBattle = function () {
+	moogle.botlogs('battle start')
+	Client.guilds.forEach(guild => {
+		let bots = moogle.bots[guild.id].id
+		moogle.botlogs(bots)
+		moogle.botlogs(guild.id)
+		for(let j = 0; j < bots.length; j++) {
+			let bot = bots[j]
+			moogle.botlogs(guild.id)
+			moogle.botlogs('Wait')
+			if (moogle.botInfo[guild.id + bot].BattleMode === true && getRandomIntInclusive(0, 100) < 50) {
+				moogle.botlogs('battle')
+				moogle.botInfo[guild.id + bot].__existingAttacks = []
+		
+				enemyAttacks(Client, guild, moogle.bots, moogle.playerlist, moogle.selbot, moogle.selplayer, guild.id, moogle.playerInfo, moogle.classeslist)
+			
+			}	
+
+		}
+	})
+
+
+
+}
+Client.setInterval(moogle.botBattle, 120000)
 Client.setInterval(moogle.autoSave, 600000)
 
 GuildMember.prototype.killPerson = function (user, message) {
@@ -675,7 +919,7 @@ moogle.roleManagment = function () {
 				
 			})
 			// moogle.roleamount[roleid].amount = moogle.roleamount[roleid].member.length
-			console.log(`role  ${roleName} ${roleid} users ${moogle.roleamount[roleid].amount}`)
+			return(`role ${roleName} ${roleid} users ${moogle.roleamount[roleid].amount}`)
 
 		})
 	// 	Client.guilds.find('id', guildid).members.forEach(member => {

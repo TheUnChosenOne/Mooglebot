@@ -1,5 +1,3 @@
-
-
 export function run(Items, ShopItems, ItemShop, Itemlist) {
 	try {
 		const Itemdata = {
@@ -7,6 +5,8 @@ export function run(Items, ShopItems, ItemShop, Itemlist) {
 			ItemId: 0,
 			Amount: [0, 100],
 			Gold: 50,
+			Rarty: 1,
+			isKeyItem: false,
 			Effect: function (getC, getD, message, playerInventory) {
 				if (getC.Hp[0] === getC.Hp[1]) {
 					message.channel.send('your HP is full')

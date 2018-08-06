@@ -19,9 +19,9 @@ export function removeMonster(Client, server, winner, selbot, didEscape, content
 	server.members.get(botid).setNickname(botInfo[server.id + botid].BotName)
 	if (didEscape) {
 		let userResult = `\`\`\`The ${monster.MonsterName} left the server...\`\`\``
-		messagesManager(Client, message, '', userResult, server, false, true)
+		messagesManager(Client, message, null, '', userResult, server, false, true)
 	} else {
 		let userResult = content
-		messagesManager(Client, message, '', userResult, server, false, true)
+		messagesManager(Client, message, null, '', userResult, server, false, true)
 	}
 }

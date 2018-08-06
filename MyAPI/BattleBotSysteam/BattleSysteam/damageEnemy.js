@@ -3,37 +3,32 @@ import { messagesManager } from '../../MessageSysteam/messagesManager'
 import { saveData } from '../../../Main'
 import { giveItems } from '../../InvintorySysteam/itemManager'
 import { getRandomIntInclusive } from '../../Others/math'
+import { battleHanler } from './BattleManager'
+import { rewards } from '../../BotRewardSysteam/RewardManager';
 
-export function OnDamageEnemy(Client, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory, botlogs, bots, botInfo, botid, Item) {
+export function OnDamageEnemy(Client, message, enemy, enemyDamage, playerAttack, getC, getD, botid, botlogs) {
 	const server = message.guild
 	const user = message.member
 	const userId = user.id
 	const quantity = 1
 	let privetResult = ''
 	let userResult = ''
-	console.log(enemy.Items && getRandomIntInclusive(enemy.Hp / enemyDamage, enemyDamage * enemy.Hp) < (enemyDamage / enemy.Hp))
+	botlogs(enemy.Items && getRandomIntInclusive(enemy.Hp / enemyDamage, enemyDamage * enemy.Hp) < (enemyDamage / enemy.Hp))
 	// result.setDescription(userResult)
-	privetResult += `\`\`\`js\nYou attacked the \`${enemy.MonsterName}\` in \`${server.name}\`\nHere are the results:\nTook: \`${enemyDamage}\` HP from the enemy.\nLost: \`${playerDamage}\` of your own HP.\`\`\``
-	if (enemy.Items && getRandomIntInclusive(enemy.Hp / enemyDamage, enemyDamage * enemy.Hp) < (enemyDamage / enemy.Hp)) {
-
-		giveItems(Client, message, enemy.Items, quantity, message.guild.id, message.author.id)
+	if (battleHanler.playerMiss == false) {
 		
-		privetResult += `Obtained a ${enemy.Items} !`
-	}
-	const exp = Math.floor(enemy.exp * (enemyDamage / enemy.Hp))
-	if (exp) {
-		getC.Exp += exp
-		privetResult += `\nGained ${exp} experience!`
+		privetResult += `\`\`\`js\nYou attacked the \`${enemy.MonsterName}\` in \`${server.name}\`\nHere are the results:\nYou Damaged the \`${enemy.MonsterName}\` by  \`${enemyDamage}\`.\`\`\``
+		rewards(Client, message, enemy, quantity, getD, getC, botlogs, false, enemyDamage)
 		
+		saveData()
+		
+		userResult = user + '\n' + `\`\`\`js\n  fought (with a attack power of ${playerAttack})\n  You damaged the ${enemy.MonsterName} by ${enemyDamage}\`\`\``
+		
+		server.members.get(botid).setNickname(`L${server.members.get(botid).__currentBattleEnemyLv} ${enemy.MonsterName} [${server.members.get(botid).__currentBattleEnemyHp} HP]`)
+	} else {
+		privetResult += `\`\`\`js\nYou attacked the \`${enemy.MonsterName}\` in \`${server.name}\`\nHere are the results:\nYou missed the \`${enemy.MonsterName}\`.\`\`\``
+		userResult = user + '\n' + `\`\`\`js\n  fought (with a attack power of ${playerAttack})\n  You damaged the ${enemy.MonsterName} by ${enemyDamage}\`\`\``
 	}
-	const gold = Math.floor(enemy.Gold * (enemyDamage / enemy.Hp))
-	if (gold) {
-		getD.Gold += gold
-		privetResult += `\nGot $ ${gold}!`
-	}
-	saveData()
-	userResult = user + '\n' + `\`\`\`js\n  fought (with a power of ${power})\n  They damaged ${enemy.MonsterName} by ${enemyDamage} \n  HP and lost ${playerDamage} HP!\`\`\``
-	server.members.get(botid).setNickname(`L${server.members.get(botid).__currentBattleEnemyLv} ${enemy.MonsterName} [${server.members.get(botid).__currentBattleEnemyHp} HP]`)
 	server.members.get(botid).__existingAttacks.push(userId)
-	messagesManager(Client, message, privetResult, userResult, server, true, true)
+	messagesManager(Client, message, user, privetResult, userResult, server, true, true)
 }

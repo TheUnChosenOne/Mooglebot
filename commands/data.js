@@ -30,8 +30,7 @@ export function run(message, userId, Classes, getD, getC, getI, getPi, playerInv
 	embed.addField('```Guild Name```', `\`\`\`${getD.ServerName}\`\`\`` || 'empty', true)
 	embed.setFooter(`Level: ${getC.Level} ${getD.PlayerName} ${getC.ClassName}`, getD.PlayerImg)
 	embed.setTimestamp()
-
-	messagesManager(Client, message, embed, null, null, true, false)
+	messagesManager(Client, message, Client.guilds.find('id', getD.ServerId).members.find('id', getD.PlayerId), embed, null, Client.guilds.find('id', getD.ServerId), true, false)
 }
 
 export function help(Commands, CommandName) {

@@ -1,4 +1,5 @@
-import { getPlayerRoles } from "./getDataInfo";
+import { getPlayerRoles } from './getDataInfo'
+import { DnDStatRolls } from '../Others/math'
 
 
 
@@ -21,6 +22,12 @@ export function initPlayers(Client, playerInfo, defaltchannel, saveData) {
 					isDead: false,
 					isonline: false,
 					isRenamable: true,
+					Strength: DnDStatRolls()[0] + DnDStatRolls()[1] + DnDStatRolls()[2],
+					Dexterity: DnDStatRolls()[0] + DnDStatRolls()[1] + DnDStatRolls()[2],
+					Constitution: DnDStatRolls()[0] + DnDStatRolls()[1] + DnDStatRolls()[2],
+					Intelligence: DnDStatRolls()[0] + DnDStatRolls()[1] + DnDStatRolls()[2],
+					Wisdom: DnDStatRolls()[0] + DnDStatRolls()[1] + DnDStatRolls()[2],
+					Charisma: DnDStatRolls()[0] + DnDStatRolls()[1] + DnDStatRolls()[2],
 					lvllcoation: 'Left',
 					PlayerInfo: Client.guilds.array()[i].members.array()[j].user.note,
 					logChannel: defaltchannel
@@ -30,4 +37,16 @@ export function initPlayers(Client, playerInfo, defaltchannel, saveData) {
 		}
 	}
 	saveData()
+}
+
+export function playerlist(Client, player) {
+
+	const servers = Client.guilds.array()
+	for (let i = 0; i < servers.length; i++) {
+		const server = servers[i].id
+		const players = {
+			id: []
+		}
+		player[server] = player[server] || players
+	}
 }

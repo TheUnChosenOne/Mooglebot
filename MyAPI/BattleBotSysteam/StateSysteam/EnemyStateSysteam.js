@@ -2,8 +2,9 @@
 import { messagesManager } from '../../MessageSysteam/messagesManager'
 import { removeMonster } from '../BattleSysteam/RemoveMonster'
 import { Items, giveItems } from '../../InvintorySysteam/itemManager'
+import { rewards } from '../../BotRewardSysteam/RewardManager';
 
-export function OnKillEnemy(Client, message, enemy, playerDamage, enemyDamage, power, getC, getD, playerInventory, botlogs, bots, botInfo, selbot, botid, defaltchannel) {
+export function OnKillEnemy(Client, message, enemy, enemyDamage, playerAttack, getC, getD, botlogs, bots, botInfo, selbot, botid, defaltchannel) {
      
 	const server = message.guild
 	const user = message.member
@@ -12,31 +13,13 @@ export function OnKillEnemy(Client, message, enemy, playerDamage, enemyDamage, p
 	let privetResult = ''
 
 	userResult += `\`\`\`js\nYou defeated the \`${enemy.MonsterName}\` in \`${server.name}\`
-Here are the results:
-Took: \`${enemyDamage}\` HP from the enemy
-Lost: \`${playerDamage}\` of your own HP\`\`\``
-	botlogs(enemy.Items)
-	if (enemy.Items) {
+Here is the battle results:
+Took: \`${enemyDamage}\` HP from the enemy\`\`\``
 
-		giveItems(Client, message, enemy.Items, quantity, message.guild.id, message.author.id)
-	
-		privetResult += `\`\`\`js\nObtained a ${enemy.Items}`
-	}
-	if (enemy.Exp) {
-		getC.Exp += enemy.exp
-		privetResult += `\nGained: ${enemy.exp} experience!`
-		// c = true
-	}
-
-	if (enemy.Gold) {
-		getD.Gold += enemy.Gold
-		privetResult += `\nGot: $${enemy.Gold}!\`\`\``
-	}
-
+	rewards(Client, message, enemy, quantity, getD, getC, botlogs, true)
 	server.__existingAttacks = []
-	const globMessage = user + ` \`\`\`js\ndefeated the ${enemy.MonsterName}!
-They fought with a power of ' + ${power} + and lost ${playerDamage} HP!\`\`\``
+	const globMessage = user + ` \`\`\`js\ndefeated the ${enemy.MonsterName}!\nyou fought with a attack power of '${playerAttack}\`\`\``
 
 	removeMonster(Client, server, user, selbot, false, globMessage, botlogs, bots, botInfo, botid, defaltchannel, message)
-	messagesManager(Client, message, privetResult, userResult, server, true, true)
+	messagesManager(Client, message, message.member, privetResult, null, server, true, false)
 }

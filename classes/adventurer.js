@@ -1,8 +1,12 @@
 
-export function run (contents, classlist, guild, classsave, Classes, ClassName) {
+import { DnDStatRolls } from '../MyAPI/Others/math'
+import { getData } from '../MyAPI/DataSysteam/getDataInfo';
+
+export function run(contents, classlist, guild, classsave, Classes, playerInfo, ClassName) {
 	for (let i = 0; i < guild.length; i++) {
 		for (let j = 0; j < guild[i].members.array().length; j++) {
 			if (guild[i].members.array()[j].user.bot === false) {
+				let setHp = DnDStatRolls()[0] + DnDStatRolls()[1] + DnDStatRolls()[2]
 				const Classdata = {
 					ClassName: 'Adventurer',
 					lvl: '',
@@ -12,12 +16,12 @@ export function run (contents, classlist, guild, classsave, Classes, ClassName) 
 					Level: 0,
 					message: [0, 50],
 					Exp: 0,
-					Hp: [100, 100],
-					Mp: [50, 50],
-					Ap: [50, 50],
-					Atk: 10,
-					Def: 10,
-					MDef:5,
+					Hp: [getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Constitution * setHp, getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Constitution * setHp],
+					Mp: [getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Intelligence * getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Wisdom, getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Intelligence * getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Wisdom],
+					Ap: [getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Strength * getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Dexterity, getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Strength * getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Dexterity],
+					Atk: getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Strength,
+					Def: getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Dexterity,
+					MDef: getData(guild[i].members.array()[j].user.id, guild[i].id, playerInfo).Constitution,
 					Skill: ['scan'],
 					Sp: 0,
 					limit:[0, 100],

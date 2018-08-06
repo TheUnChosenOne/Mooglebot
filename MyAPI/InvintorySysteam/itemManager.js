@@ -34,7 +34,7 @@ export function giveItems(Client, message, ItemName, quantity, guildID, userId) 
 	if (typeCheck('giveItem', ItemNames, 'string') || typeCheck('giveItem', quantity, 'number')) return
 	if (quantity === 0) {
 		let GlobleResult = 'You can\'t give 0 items.'
-		messagesManager(Client, message, '', GlobleResult, message.guild, false, true)
+		messagesManager(Client, message, null, '', GlobleResult, message.guild, false, true)
 		return
 	}
 
